@@ -506,32 +506,28 @@ class WelcomeScreen extends StatelessWidget {
         'title': 'Photo Walk',
         'description': 'Join us for a photo walk in Central Park',
         'image': 'assets/photo_club_new.jpg',
+        'members': '120',
+        'events': '5',
       },
       {
         'category': 'Book Club',
         'title': 'Book Discussion',
         'description': 'Discuss the latest bestseller',
         'image': 'assets/book_club.png',
+        'members': '12000',
+        'events': '20',
       },
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         centerTitle: true,
+        automaticallyImplyLeading: false,
         elevation: 0,
-        title: const Text(
-          'Clubs',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.5,
-          ),
-        ),
+        title: Text('Clubs', style: Theme.of(context).textTheme.displayLarge),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add, color: Colors.black),
+            icon: const Icon(Icons.add, color: Colors.grey),
             onPressed: () {},
           ),
         ],
@@ -541,15 +537,11 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
+              Padding(
                 padding: EdgeInsets.fromLTRB(16, 20, 16, 8),
                 child: Text(
                   'Trending Clubs',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: Theme.of(context).textTheme.displayLarge,
                 ),
               ),
               SizedBox(
@@ -576,8 +568,10 @@ class WelcomeScreen extends StatelessWidget {
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
                                     color: Colors.grey[800],
-                                    child: const Icon(Icons.broken_image,
-                                        color: Colors.white),
+                                    child: const Icon(
+                                      Icons.broken_image,
+                                      color: Colors.white,
+                                    ),
                                   );
                                 },
                               ),
@@ -586,11 +580,7 @@ class WelcomeScreen extends StatelessWidget {
                           const SizedBox(height: 8),
                           Text(
                             club['title']!,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                              fontSize: 16,
-                            ),
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           Text(
                             club['members']!,
@@ -605,17 +595,27 @@ class WelcomeScreen extends StatelessWidget {
                   },
                 ),
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                child: Text(
-                  'Explore Clubs',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Explore Clubs',
+                      style: Theme.of(context).textTheme.displayLarge,
+                    ),
+                    Text(
+                      'Visit All',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              SizedBox(height: 10),
               SizedBox(
                 height: 80,
                 child: Padding(
@@ -632,13 +632,11 @@ class WelcomeScreen extends StatelessWidget {
                         child: Column(
                           spacing: 5,
                           children: [
-                            Image.asset('${cat['icon']}',width: 40),
+                            Image.asset('${cat['icon']}', width: 40),
                             const SizedBox(width: 10),
-                            Text('${cat['title']}',
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Text(
+                              '${cat['title']}',
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ],
                         ),
@@ -647,17 +645,14 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
                 child: Text(
                   'My Clubs',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: Theme.of(context).textTheme.displayLarge,
                 ),
               ),
+              SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: ListView.builder(
@@ -686,11 +681,7 @@ class WelcomeScreen extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Text(
                                   club['title']!,
-                                  style: const TextStyle(
-                                    color: Color(0xFF101518),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
@@ -700,25 +691,25 @@ class WelcomeScreen extends StatelessWidget {
                                     fontSize: 14,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFEAEDF1),
-                                    foregroundColor: const Color(0xFF101518),
-                                    shape: const StadiumBorder(),
-                                    minimumSize: const Size(84, 32),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Members: ${club['members']!}',
+                                      style: const TextStyle(
+                                        color: Color(0xFF5C748A),
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),
-                                  child: const Text(
-                                    'Join',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
+                                    Text(
+                                      'Events: ${club['events']!}',
+                                      style: const TextStyle(
+                                        color: Color(0xFF5C748A),
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -736,8 +727,10 @@ class WelcomeScreen extends StatelessWidget {
                                   errorBuilder: (context, error, stackTrace) {
                                     return Container(
                                       color: Colors.grey[800],
-                                      child: const Icon(Icons.broken_image,
-                                          color: Colors.white),
+                                      child: const Icon(
+                                        Icons.broken_image,
+                                        color: Colors.white,
+                                      ),
                                     );
                                   },
                                 ),

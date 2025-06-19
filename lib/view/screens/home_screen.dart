@@ -39,11 +39,11 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: AppColors.white,
         body: pages[navController.currentIndex.value],
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: AppColors.white,
+          backgroundColor: Theme.of(context).bottomAppBarTheme.color,
           currentIndex: navController.currentIndex.value,
           onTap: navController.changeTab,
           items: items,
-          selectedItemColor: AppColors.primary,
+          selectedItemColor: Theme.of(context).colorScheme.primary,
           unselectedItemColor: Colors.grey,
           type: BottomNavigationBarType.fixed,
         ),
