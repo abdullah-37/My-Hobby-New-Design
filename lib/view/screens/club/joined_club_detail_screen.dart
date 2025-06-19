@@ -96,7 +96,7 @@ class _BookClubScreenState extends State<JoinedClubDetailScreen> {
                   child: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.clubFeedModel?.data.length ?? 0,
+                    itemCount: 2,
                     itemBuilder: (context, index) {
                       final data = controller.clubFeedModel?.data[index];
                       if (data == null) return const SizedBox();

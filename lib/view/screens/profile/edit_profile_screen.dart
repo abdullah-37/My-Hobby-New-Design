@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hobby_club_app/controller/profile/edit_profile_controller.dart';
-import 'package:hobby_club_app/utils/app_strings.dart';
-import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
-import 'package:hobby_club_app/view/widgets/custom_network_image.dart';
-import 'package:hobby_club_app/view/widgets/custom_text_form_field.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
+import 'package:hobby_club_app/utils/app_strings.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
+import 'package:hobby_club_app/utils/theme/theme_helper.dart';
+import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 import 'package:hobby_club_app/view/widgets/custom_button.dart';
+import 'package:hobby_club_app/view/widgets/custom_network_image.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -95,46 +95,50 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     spacing: Dimensions.width10,
                     children: [
                       Expanded(
-                        child: CustomTextFormField(
-                          labelText: AppStrings.firstName,
-                          hintText: AppStrings.firstName,
-                          controller: controller.firstNameController,
-                          keyboardType: TextInputType.name,
-                          focusNode: controller.firstNameFocus,
-                          nextFocus: controller.lastNameFocus,
+                        child: Container(
+                          decoration: ThemeHelper().inputBoxDecorationShaddow(),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'First Name',
+                              hintText: 'Enter your first name',
+                            ),
+                          ),
                         ),
                       ),
                       Expanded(
-                        child: CustomTextFormField(
-                          labelText: AppStrings.lastName,
-                          hintText: AppStrings.lastName,
-                          controller: controller.lastNameController,
-                          keyboardType: TextInputType.name,
-                          focusNode: controller.firstNameFocus,
-                          nextFocus: controller.usernameFocus,
+                        child: Container(
+                          decoration: ThemeHelper().inputBoxDecorationShaddow(),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Second Name',
+                              hintText: 'Enter your second name',
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: Dimensions.height15),
 
-                  CustomTextFormField(
-                    labelText: AppStrings.userName,
-                    hintText: AppStrings.userName,
-                    controller: controller.usernameController,
-                    focusNode: controller.usernameFocus,
-                    nextFocus: controller.dobFocus,
+                  Container(
+                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Phone Number',
+                        hintText: 'Enter your pnone number',
+                      ),
+                    ),
                   ),
                   SizedBox(height: Dimensions.height15),
 
-                  CustomTextFormField(
-                    labelText: AppStrings.dob,
-                    hintText: AppStrings.dob,
-                    controller: controller.dobController,
-                    keyboardType: TextInputType.emailAddress,
-                    focusNode: controller.dobFocus,
-                    inputFormatters: [DateInputFormatter()],
-                    nextFocus: FocusNode(),
+                  Container(
+                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'Enter your email',
+                      ),
+                    ),
                   ),
                   SizedBox(height: Dimensions.height15),
 

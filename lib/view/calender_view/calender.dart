@@ -129,7 +129,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
     ThemeController themeController = Get.find<ThemeController>();
     // final bool isDark = themeController.themeMode.value == ThemeMode.dark;
     return Obx(() {
-      final isDark = themeController.isDarkMode;
+      final isDark = themeController.themeMode.value == ThemeMode.dark;
 
       return Scaffold(
         body: SafeArea(

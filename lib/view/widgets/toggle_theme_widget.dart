@@ -10,7 +10,7 @@ class ThemeToggleButton extends StatelessWidget {
     final ThemeController themeController = Get.find();
 
     return Obx(() {
-      final isDark = themeController.isDarkMode;
+      final isDark = themeController.themeMode.value == ThemeMode.dark;
 
       return AnimatedSwitcher(
         duration: const Duration(milliseconds: 500),

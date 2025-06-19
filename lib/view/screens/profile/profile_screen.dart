@@ -96,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       body: GetBuilder<ProfileController>(
         builder: (controller) {
-          final isDark = themeController.isDarkMode;
+          final isDark = themeController.themeMode.value == ThemeMode.dark;
 
           return Stack(
             children: [
