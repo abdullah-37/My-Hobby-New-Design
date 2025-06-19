@@ -5,7 +5,7 @@ import 'package:hobby_club_app/controller/navigation_controller.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/view/activities%20view/event_screen.dart.dart';
 import 'package:hobby_club_app/view/calender_view/calender.dart';
-import 'package:hobby_club_app/view/screens/posts/post_screen.dart';
+import 'package:hobby_club_app/view/screens/profile/profile_screen.dart';
 import 'package:hobby_club_app/view/screens/welcome_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -16,8 +16,8 @@ class HomeScreen extends StatelessWidget {
   final List<Widget> pages = [
     WelcomeScreen(),
     EventsScreen(),
-    CustomCalendar(),
-    PostScreen(),
+    SizedBox(),
+    SizedBox(),
     // CustomCalendar(),
     // ProfileScreen(),
   ];

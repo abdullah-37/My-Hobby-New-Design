@@ -5,7 +5,10 @@ class ThemeController extends GetxController {
   // Use ThemeMode.system as default
   Rx<ThemeMode> themeMode = ThemeMode.system.obs;
 
-  bool get isDarkMode => themeMode.value == ThemeMode.dark;
+  bool get isDarkMode =>
+      themeMode.value == ThemeMode.dark ||
+      (themeMode.value == ThemeMode.system &&
+          MediaQuery.of(Get.context!).platformBrightness == Brightness.dark);
 
   void toggleTheme() {
     if (isDarkMode) {

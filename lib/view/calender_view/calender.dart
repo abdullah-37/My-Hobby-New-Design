@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/theme_controller.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/utils/style.dart';
@@ -126,163 +125,139 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeController themeController = Get.find<ThemeController>();
-    // final bool isDark = themeController.themeMode.value == ThemeMode.dark;
-    return Obx(() {
-      final isDark = themeController.isDarkMode;
-
-      return Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 18),
-              // Custom Tab Bar - UI remains exactly the same
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Container(
-                    width: double.infinity,
-                    height: Get.height * 0.04,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.3),
-                          blurRadius: 10,
-                          spreadRadius: 2,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        AnimatedAlign(
-                          duration: const Duration(milliseconds: 300),
-                          alignment:
-                              currentView == 'Monthly'
-                                  ? Alignment.centerLeft
-                                  : Alignment.centerRight,
-                          child: Container(
-                            width: Get.width * 0.50,
-                            height: Get.height * 0.045,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 18),
+            // Custom Tab Bar - UI remains exactly the same
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Container(
+                  width: double.infinity,
+                  height: Get.height * 0.04,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      AnimatedAlign(
+                        duration: const Duration(milliseconds: 300),
+                        alignment: currentView == 'Monthly'
+                            ? Alignment.centerLeft
+                            : Alignment.centerRight,
+                        child: Container(
+                          width: Get.width * 0.50,
+                          height: Get.height * 0.045,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    currentView = 'Monthly';
-                                  });
-                                },
-                                child: Center(
-                                  child: buildStatusItem(
-                                    title: 'Monthly',
-                                    bgColor: Colors.transparent,
-                                    textColor:
-                                        currentView == 'Monthly'
-                                            ? Colors.white
-                                            : AppColors.secondary,
-                                  ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  currentView = 'Monthly';
+                                });
+                              },
+                              child: Center(
+                                child: buildStatusItem(
+                                  title: 'Monthly',
+                                  bgColor: Colors.transparent,
+                                  textColor: currentView == 'Monthly'
+                                      ? Colors.white
+                                      : AppColors.secondary,
                                 ),
                               ),
                             ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    currentView = 'Weekly';
-                                  });
-                                },
-                                child: Center(
-                                  child: buildStatusItem(
-                                    title: 'Weekly',
-                                    bgColor: Colors.transparent,
-                                    textColor:
-                                        currentView == 'Weekly'
-                                            ? Colors.white
-                                            : AppColors.secondary,
-                                  ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  currentView = 'Weekly';
+                                });
+                              },
+                              child: Center(
+                                child: buildStatusItem(
+                                  title: 'Weekly',
+                                  bgColor: Colors.transparent,
+                                  textColor: currentView == 'Weekly'
+                                      ? Colors.white
+                                      : AppColors.secondary,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
-              // Navigation controls
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 16,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.keyboard_arrow_left,
-                        size: 30,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                      onPressed: _navigatePrevious,
-                    ),
-                    Text(
-                      _getPeriodLabel(),
-                      style: AppStyles.heading.copyWith(
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-
-                    IconButton(
-                      icon: Icon(
-                        Icons.keyboard_arrow_right,
-                        size: 30,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                      onPressed: _navigateNext,
-                    ),
-                  ],
-                ),
+            ),
+            // Navigation controls
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.keyboard_arrow_left, size: 30),
+                    onPressed: _navigatePrevious,
+                  ),
+                  Text(
+                    _getPeriodLabel(),
+                    style: AppStyles.heading.copyWith(color: Colors.white),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.keyboard_arrow_right, size: 30),
+                    onPressed: _navigateNext,
+                  ),
+                ],
               ),
-              // Calendar View
-              Expanded(
-                child:
-                    currentView == 'Monthly'
-                        ? _buildMonthlyView(isDark: isDark)
-                        : _buildWeeklyView(isDark: isDark),
-              ),
-              // Event List
-              if (_selectedDate != null) _buildEventList(),
-            ],
-          ),
+            ),
+            // Calendar View
+            Expanded(
+              child: currentView == 'Monthly'
+                  ? _buildMonthlyView()
+                  : _buildWeeklyView(),
+            ),
+            // Event List
+            if (_selectedDate != null) _buildEventList(),
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 
-  Widget _buildMonthlyView({required bool isDark}) {
+  Widget _buildMonthlyView() {
     DateTime firstDay = DateTime(_focusedDate.year, _focusedDate.month, 1);
     int daysToSubtract = (firstDay.weekday % 7);
     DateTime gridStart = firstDay.subtract(Duration(days: daysToSubtract));
     List<DateTime> dates = List.generate(
       42,
-      (index) => gridStart.add(Duration(days: index)),
+          (index) => gridStart.add(Duration(days: index)),
     );
 
     return Column(
       children: [
-        _buildWeekdayHeaders(isDark: isDark),
+        _buildWeekdayHeaders(),
         const SizedBox(height: 10),
         Expanded(
           child: GridView.builder(
@@ -294,14 +269,12 @@ class _CustomCalendarState extends State<CustomCalendar> {
             itemCount: 42,
             itemBuilder: (context, index) {
               DateTime date = dates[index];
-              bool isToday =
-                  date.year == DateTime.now().year &&
+              bool isToday = date.year == DateTime.now().year &&
                   date.month == DateTime.now().month &&
                   date.day == DateTime.now().day;
               bool isInCurrentMonth = date.month == _focusedDate.month;
               bool hasEvents = _getEventsForDate(date).isNotEmpty;
               return DateCell(
-                isDark: isDark,
                 date: date,
                 isToday: isToday,
                 isInCurrentPeriod: isInCurrentMonth,
@@ -320,63 +293,52 @@ class _CustomCalendarState extends State<CustomCalendar> {
     );
   }
 
-  Widget _buildWeeklyView({required bool isDark}) {
+  Widget _buildWeeklyView() {
     DateTime weekStart = _focusedDate.subtract(
       Duration(days: (_focusedDate.weekday % 7)),
     );
     List<DateTime> weekDates = List.generate(
       7,
-      (index) => weekStart.add(Duration(days: index)),
+          (index) => weekStart.add(Duration(days: index)),
     );
 
     return Column(
       children: [
-        _buildWeekdayHeaders(isDark: isDark),
+        _buildWeekdayHeaders(),
         Row(
-          children:
-              weekDates.map((date) {
-                bool isToday =
-                    date.year == DateTime.now().year &&
-                    date.month == DateTime.now().month &&
-                    date.day == DateTime.now().day;
-                bool hasEvents = _getEventsForDate(date).isNotEmpty;
-                return Expanded(
-                  child: DateCell(
-                    isDark: isDark,
-                    date: date,
-                    isToday: isToday,
-                    isInCurrentPeriod: true,
-                    hasEvents: hasEvents,
-                    showWeekday: true,
-                    onTap: () {
-                      setState(() {
-                        _selectedDate = date;
-                      });
-                    },
-                  ),
-                );
-              }).toList(),
+          children: weekDates.map((date) {
+            bool isToday = date.year == DateTime.now().year &&
+                date.month == DateTime.now().month &&
+                date.day == DateTime.now().day;
+            bool hasEvents = _getEventsForDate(date).isNotEmpty;
+            return Expanded(
+              child: DateCell(
+                date: date,
+                isToday: isToday,
+                isInCurrentPeriod: true,
+                hasEvents: hasEvents,
+                showWeekday: true,
+                onTap: () {
+                  setState(() {
+                    _selectedDate = date;
+                  });
+                },
+              ),
+            );
+          }).toList(),
         ),
       ],
     );
   }
 
-  Widget _buildWeekdayHeaders({required bool isDark}) {
+  Widget _buildWeekdayHeaders() {
     List<String> weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return Row(
-      children:
-          weekdays.map((day) {
-            return Expanded(
-              child: Center(
-                child: Text(
-                  day,
-                  style: AppStyles.body.copyWith(
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
+      children: weekdays.map((day) {
+        return Expanded(
+          child: Center(child: Text(day, style: AppStyles.body)),
+        );
+      }).toList(),
     );
   }
 
@@ -390,22 +352,23 @@ class _CustomCalendarState extends State<CustomCalendar> {
         ),
       );
     }
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: events.length,
-      itemBuilder: (context, index) {
-        final event = events[index];
-        return EventWidget(
-          clubName: 'Club Name',
-          isJoined: true,
-          name: event.name,
-          description: event.description,
-          date: event.date,
-          day: event.day,
-          time: event.time,
-          participants: int.tryParse(event.participants) ?? 0,
-        );
-      },
+    return Expanded(
+      child: ListView.builder(
+        itemCount: events.length,
+        itemBuilder: (context, index) {
+          final event = events[index];
+          return EventWidget(
+            clubName: 'Club Name',
+            isJoined: true,
+            name: event.name,
+            description: event.description,
+            date: event.date,
+            day: event.day,
+            time: event.time,
+            participants: int.tryParse(event.participants) ?? 0,
+          );
+        },
+      ),
     );
   }
 
@@ -439,7 +402,6 @@ class DateCell extends StatelessWidget {
   final bool hasEvents;
   final bool showWeekday;
   final VoidCallback onTap;
-  final bool isDark;
 
   const DateCell({
     super.key,
@@ -449,7 +411,6 @@ class DateCell extends StatelessWidget {
     required this.hasEvents,
     required this.showWeekday,
     required this.onTap,
-    required this.isDark,
   });
 
   @override
@@ -461,16 +422,11 @@ class DateCell extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimensions.radius10),
-            color:
-                isToday
-                    ? isDark
-                        ? Colors.white
-                        : Colors.black
-                    : hasEvents
-                    ? AppColors.background.withValues(alpha: 0.6)
-                    : isDark
-                    ? Theme.of(context).primaryColor
-                    : Theme.of(context).primaryColor,
+            color: isToday
+                ? AppColors.white
+                : hasEvents
+                ? AppColors.textfieldcolor.withValues(alpha: 0.9)
+                : null,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -478,14 +434,11 @@ class DateCell extends StatelessWidget {
               Text(
                 date.day.toString(),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color:
-                      isToday
-                          ? isDark
-                              ? Colors.black
-                              : Colors.white
-                          : isInCurrentPeriod
-                          ? Colors.white
-                          : Colors.grey,
+                  color: isToday
+                      ? Colors.black
+                      : isInCurrentPeriod
+                      ? Colors.white
+                      : Colors.grey,
                   fontWeight: FontWeight.bold,
                 ),
               ),
