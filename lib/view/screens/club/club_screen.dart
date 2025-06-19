@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hobby_club_app/controller/club/clubs_controller.dart';
@@ -5,12 +6,10 @@ import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/app_strings.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/utils/style.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 import 'package:hobby_club_app/view/widgets/custom_button.dart';
 import 'package:hobby_club_app/view/widgets/recommended_club_card.dart';
 
-import 'book_club_screen.dart';
 import 'create_club_screen.dart';
 
 class ClubScreen extends StatefulWidget {
@@ -122,10 +121,10 @@ class _ClubScreenState extends State<ClubScreen> {
                                     title: data.title ?? "",
                                     subtitle: data.desc ?? "",
                                     onTap: () {
-                                      Get.to(
-                                        () => BookClubScreen(id: data.id!),
-                                        arguments: data,
-                                      );
+                                      // Get.to(
+                                      //   // () => BookClubScreen(id: data.id!),
+                                      //   // arguments: data,
+                                      // );
                                     },
                                   );
                                 },

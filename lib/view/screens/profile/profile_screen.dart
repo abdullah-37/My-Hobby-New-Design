@@ -2,18 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hobby_club_app/controller/hide_floating_button_controller.dart';
 import 'package:hobby_club_app/controller/notifications_controller.dart';
 import 'package:hobby_club_app/controller/profile/profile_controller.dart';
+import 'package:hobby_club_app/controller/theme_controller.dart';
 import 'package:hobby_club_app/models/user_model.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/app_strings.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/utils/style.dart';
 import 'package:hobby_club_app/view/screens/auth/login_screen.dart';
-import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 import 'package:hobby_club_app/view/widgets/custom_button.dart';
 import 'package:hobby_club_app/view/widgets/custom_club_card.dart';
 import 'package:hobby_club_app/view/widgets/custom_network_image.dart';
+import 'package:hobby_club_app/view/widgets/header_widget.dart';
 
 import 'edit_profile_screen.dart';
 
@@ -28,7 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   GetStorage storage = GetStorage();
   User? user;
   bool isLoading = true;
-  String currentScreen = 'Accepted';
+  String currentScreen = '1';
   final bool _notificationsEnabled = true;
 
   @override
@@ -59,354 +61,463 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  String currentView = 'Monthly'; // Changed from currentScreen to currentView
+
   @override
   Widget build(BuildContext context) {
+    ThemeController themeController = Get.find<ThemeController>();
+    final floatingController = Get.find<FloatingButtonController>();
+
     NotificationsController notificationsController =
         Get.find<NotificationsController>();
     return Scaffold(
-      appBar: CustomAppBar(title: AppStrings.profile, isLeading: false),
-      bottomNavigationBar: Container(
-        padding: Dimensions.screenPaddingHV,
-        child: CustomButton(
-          text: AppStrings.logout,
-          color: Colors.redAccent,
-          onPressed: () {
-            Get.dialog(
-              AlertDialog(
-                title: const Text("Confirm Logout"),
-                content: const Text("Are you sure you want to log out?"),
-                actions: [
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: const Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      Get.back();
-                      await storage.remove("user");
-                      await storage.remove("profile");
-                      await storage.remove("token");
-                      Get.offAll(LoginScreen());
-                    },
-                    child: const Text(
-                      AppStrings.logout,
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                ],
-              ),
-            );
-            // Get.to(EditProfileScreen());
-          },
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(
+          "Settings",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        elevation: 0.5,
+        iconTheme: IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: <Color>[
+                Theme.of(context).primaryColor,
+                Theme.of(context).colorScheme.secondary,
+              ],
+            ),
+          ),
         ),
       ),
+
       body: GetBuilder<ProfileController>(
-        builder:
-            (controller) => SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    padding: Dimensions.screenPaddingHV,
-                    decoration: BoxDecoration(color: AppColors.background),
-                    child: Column(
-                      children: [
-                        CustomNetworkImage(
-                          size: Dimensions.width100,
-                          imageUrl: controller.profile.img ?? '',
-                        ),
-                        Text(
-                          '${controller.profile.firstName ?? ''} ${controller.profile.lastName ?? ''}',
-                          style: AppStyles.largeHeading.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        if (controller.profile.userName != null)
-                          Text(
-                            '@${controller.profile.userName}',
-                            style: AppStyles.body.copyWith(
-                              color: Colors.grey,
-                              fontSize: 16,
-                            ),
-                          ),
-                        SizedBox(height: Dimensions.height10),
-                        Column(
-                          spacing: Dimensions.height10,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+        builder: (controller) {
+          final isDark = themeController.isDarkMode;
+
+          return Stack(
+            children: [
+              SizedBox(
+                height: 100,
+                child: HeaderWidget(100, false, Icons.person),
+              ),
+              Padding(
+                padding: Dimensions.screenPaddingHorizontal,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        // padding: Dimensions.screenPaddingHV,
+                        // decoration: BoxDecoration(color: AppColors.background),
+                        child: Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Profile Details',
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    Get.to(const EditProfileScreen());
-                                  },
-                                  child: Icon(
-                                    Icons.edit,
-                                    color: AppColors.primary,
-                                    size: 25,
-                                  ),
-                                ),
-                              ],
+                            CustomNetworkImage(
+                              size: Dimensions.width100,
+                              imageUrl:
+                                  controller.profile.img ??
+                                  'https://lh3.googleusercontent.com/aida-public/AB6AXuADwPMLnjDQoHaeflMfxpDvSV1hUYxmTcoELxjPF34XVVN6-I9GjPc-kk60zdyfrTWmmr0VqCv85bEzPmEH6uRdnEJzsEff9wknyuv1jbuCRa_rDTgAsoGw-xGHzl_sktSiN97lMvbisMky4u8btqG2bqta5YZrS7gpJexqRXNSSkjxFSvruF_I85dAPh3QnHzZ5O2pOM774DFzRlwU7CgJM6gBn2w6sbAO8kF8A8lwot-cpnKdsLQUpu4PUujOyxesvZSRkhqGkgsu',
                             ),
-                            Row(
-                              spacing: 20,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(
-                                  spacing: Dimensions.height10,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      spacing: 10,
-                                      children: [
-                                        Icon(
-                                          Icons.email,
-                                          color: AppColors.primary,
-                                          size: 22,
-                                        ),
-                                        Text(
-                                          user?.email ?? 'Not provided',
-                                          style: AppStyles.body.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      spacing: 10,
-                                      children: [
-                                        Icon(
-                                          Icons.phone,
-                                          color: AppColors.primary,
-                                          size: 22,
-                                        ),
-                                        Text(
-                                          user?.phone ?? 'Not provided',
-                                          style: AppStyles.body.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                            SizedBox(height: Dimensions.height20),
+
+                            Text(
+                              'Muhammad Abdullah',
+                              style: AppStyles.largeHeading.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            if (controller.profile.userName != null)
+                              Text(
+                                'efefefre',
+                                style: AppStyles.body.copyWith(
+                                  color: Colors.black,
+                                  fontSize: 106,
                                 ),
-                                Column(
-                                  spacing: Dimensions.height10,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      spacing: 10,
-                                      children: [
-                                        Icon(
-                                          Icons.cake,
+                              ),
+                            SizedBox(height: Dimensions.height20),
+                            SingleChildScrollView(
+                              child: Column(
+                                spacing: Dimensions.height10,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Profile Details',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          Get.to(const EditProfileScreen());
+                                        },
+                                        child: Icon(
+                                          Icons.edit,
                                           color: AppColors.primary,
-                                          size: 22,
+                                          size: 25,
                                         ),
-                                        Text(
-                                          controller.profile.dob ??
-                                              'Not provided',
-                                          style: AppStyles.body.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    spacing: 20,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Column(
+                                        spacing: Dimensions.height10,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            spacing: 10,
+                                            children: [
+                                              Icon(
+                                                Icons.email,
+                                                color: AppColors.primary,
+                                                size: 22,
+                                              ),
+                                              Text(
+                                                user?.email ?? 'Not provided',
+                                                style: AppStyles.body.copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      spacing: 10,
-                                      children: [
-                                        Icon(
-                                          Icons.transgender,
-                                          color: AppColors.primary,
-                                          size: 22,
-                                        ),
-                                        Text(
-                                          controller.profile.gender ??
-                                              'Not provided',
-                                          style: AppStyles.body.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
+                                          Row(
+                                            spacing: 10,
+                                            children: [
+                                              Icon(
+                                                Icons.phone,
+                                                color: AppColors.primary,
+                                                size: 22,
+                                              ),
+                                              Text(
+                                                user?.phone ?? 'Not provided',
+                                                style: AppStyles.body.copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                        ],
+                                      ),
+                                      Column(
+                                        spacing: Dimensions.height10,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            spacing: 10,
+                                            children: [
+                                              Icon(
+                                                Icons.cake,
+                                                color: AppColors.primary,
+                                                size: 22,
+                                              ),
+                                              Text(
+                                                controller.profile.dob ??
+                                                    'Not provided',
+                                                style: AppStyles.body.copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            spacing: 10,
+                                            children: [
+                                              Icon(
+                                                Icons.transgender,
+                                                color: AppColors.primary,
+                                                size: 22,
+                                              ),
+                                              Text(
+                                                controller.profile.gender ??
+                                                    'Not provided',
+                                                style: AppStyles.body.copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: Dimensions.height5),
-                  Padding(
-                    padding: Dimensions.screenPaddingH,
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Text(
-                        'My Clubs',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      ),
+                      // SizedBox(height: Dimensions.height10),
+                      // //edit profile button
+                      // Container(
+                      //   decoration: ThemeHelper().buttonBoxDecoration(context),
+                      //   child: ElevatedButton(
+                      //     style: ThemeHelper().buttonStyle(),
+                      //     child: Padding(
+                      //       padding: EdgeInsets.only(),
+                      //       child: Text(
+                      //         'Edit Profile'.toUpperCase(),
+                      //         style: TextStyle(
+                      //           fontSize: 20,
+                      //           fontWeight: FontWeight.bold,
+                      //           color: Colors.white,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     onPressed: () {
+                      //       Get.to(() => EditProfileScreen());
+                      //       // //After successful login we will redirect to profile page. Let's create profile page now
+                      //       // Navigator.pushReplacement(
+                      //       //   context,
+                      //       //   MaterialPageRoute(
+                      //       //     builder: (context) => ProfilePage(),
+                      //       //   ),
+                      //       // );
+                      //     },
+                      //   ),
+                      // ),
+                      SizedBox(height: Dimensions.height20),
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          'My Clubs',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: Dimensions.height5),
-                  GestureDetector(
-                    onTap: () {
-                      FocusScope.of(context).unfocus();
-                    },
-                    onHorizontalDragEnd: (details) {
-                      if (details.primaryVelocity! < 0) {
-                        setState(() {
-                          currentScreen = 'Accepted';
-                        });
-                      } else if (details.primaryVelocity! > 0) {
-                        setState(() {
-                          currentScreen = 'Pending';
-                        });
-                      }
-                    },
-                    child: Stack(
-                      children: [
-                        AnimatedAlign(
-                          duration: const Duration(milliseconds: 300),
-                          alignment:
-                              currentScreen == 'Accepted'
-                                  ? Alignment.centerLeft
-                                  : Alignment.centerRight,
+                      SizedBox(height: Dimensions.height10),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 10,
+                          ),
                           child: Container(
-                            width: Get.width * 0.50,
-                            height: Get.height * 0.045,
+                            width: double.infinity,
+                            height: Get.height * 0.055,
                             decoration: BoxDecoration(
-                              color: AppColors.primary,
+                              color:
+                                  isDark
+                                      ? Colors.grey.withValues(alpha: 0.3)
+                                      : Colors.white,
                               borderRadius: BorderRadius.circular(30),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withValues(alpha: 0.3),
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: Stack(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4.0,
+                                    vertical: 4,
+                                  ),
+                                  child: AnimatedAlign(
+                                    duration: const Duration(milliseconds: 300),
+                                    alignment:
+                                        currentView == '1'
+                                            ? Alignment.centerLeft
+                                            : Alignment.centerRight,
+                                    child: Container(
+                                      width: Get.width * 0.4,
+                                      // height: 100,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).primaryColor,
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            currentView = '1';
+                                          });
+                                        },
+                                        child: Center(
+                                          child: buildStatusItem(
+                                            title: 'Accepted',
+                                            bgColor: Colors.transparent,
+                                            textColor:
+                                                currentView == '1'
+                                                    ? Colors.white
+                                                    : AppColors.secondary,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            currentView = '0';
+                                          });
+                                        },
+                                        child: Center(
+                                          child: buildStatusItem(
+                                            title: 'Pending',
+                                            bgColor: Colors.transparent,
+                                            textColor:
+                                                currentView == '0'
+                                                    ? Colors.white
+                                                    : AppColors.secondary,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    currentScreen = 'Accepted';
-                                  });
-                                },
-                                child: Center(
-                                  child: buildStatusItem(
-                                    title: 'Accepted'.tr,
-                                    bgColor: Colors.transparent,
-                                    textColor:
-                                        currentScreen == 'Accepted'
-                                            ? Colors.white
-                                            : AppColors.secondary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    currentScreen = 'Pending';
-                                  });
-                                },
-                                child: Center(
-                                  child: buildStatusItem(
-                                    title: 'Pending'.tr,
-                                    bgColor: Colors.transparent,
-                                    textColor:
-                                        currentScreen == 'Pending'
-                                            ? Colors.white
-                                            : AppColors.secondary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  currentScreen == 'Accepted'
-                      ? acceptedClubs(controller: controller)
-                      : pendingClubs(controller: controller),
-                  SizedBox(height: Dimensions.height5),
-                  Padding(
-                    padding: Dimensions.screenPaddingH,
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Text(
-                        'Setting',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      ),
+                      currentScreen == '1'
+                          ? acceptedClubs(controller: controller)
+                          : pendingClubs(controller: controller),
+                      SizedBox(height: Dimensions.height5),
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          'Settings',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: Dimensions.height5),
-                  Padding(
-                    padding: Dimensions.screenPaddingH,
-                    child: Column(
-                      spacing: 20,
-                      children: [
-                        Row(
-                          children: [
-                            Text('Language', style: AppStyles.body),
-                            Spacer(),
-                            Text('English', style: AppStyles.greysubtitle),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text('Region', style: AppStyles.body),
-                            Spacer(),
-                            Text('Pakistan', style: AppStyles.greysubtitle),
-                          ],
-                        ),
-                        Obx(
-                          () => Row(
+                      SizedBox(height: Dimensions.height10),
+                      Column(
+                        spacing: 20,
+                        children: [
+                          Row(
                             children: [
-                              Text('Notifications', style: AppStyles.body),
-                              const Spacer(),
-                              CupertinoSwitch(
-                                value:
-                                    notificationsController.isSubscribed.value,
-                                onChanged: (bool newValue) {
-                                  notificationsController.toggleNotifications(
-                                    newValue,
-                                  );
-                                },
-                                activeTrackColor: AppColors.primary,
-                              ),
+                              Text('Language', style: AppStyles.body),
+                              Spacer(),
+                              Text('English', style: AppStyles.greysubtitle),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
+                          Row(
+                            children: [
+                              Text('Region', style: AppStyles.body),
+                              Spacer(),
+                              Text('Pakistan', style: AppStyles.greysubtitle),
+                            ],
+                          ),
+                          Obx(
+                            () => Row(
+                              children: [
+                                Text('Notifications', style: AppStyles.body),
+                                const Spacer(),
+                                CupertinoSwitch(
+                                  value:
+                                      notificationsController
+                                          .isSubscribed
+                                          .value,
+                                  onChanged: (bool newValue) {
+                                    notificationsController.toggleNotifications(
+                                      newValue,
+                                    );
+                                  },
+                                  activeTrackColor:
+                                      Theme.of(context).primaryColor,
+                                ),
+                              ],
+                            ),
+                          ),
+                          // disable floating button
+                          Obx(
+                            () => Row(
+                              children: [
+                                Text('Floating Button', style: AppStyles.body),
+                                const Spacer(),
+                                CupertinoSwitch(
+                                  value: floatingController.isVisible.value,
+                                  onChanged: (bool newValue) {
+                                    floatingController.toggleVisibility();
+                                  },
+                                  activeTrackColor:
+                                      Theme.of(context).primaryColor,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      CustomButton(
+                        text: AppStrings.logout,
+                        color: Colors.redAccent,
+                        onPressed: () {
+                          Get.dialog(
+                            AlertDialog(
+                              title: const Text("Confirm Logout"),
+                              content: const Text(
+                                "Are you sure you want to log out?",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Get.back(),
+                                  child: const Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Get.back();
+                                    await storage.remove("user");
+                                    await storage.remove("profile");
+                                    await storage.remove("token");
+                                    Get.offAll(LoginScreen());
+                                  },
+                                  child: const Text(
+                                    AppStrings.logout,
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                          // Get.to(EditProfileScreen());
+                        },
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -431,20 +542,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         itemCount: controller.acceptedClubs.length,
                         itemBuilder: (context, index) {
                           var data = controller.acceptedClubs[index];
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              bottom: Dimensions.padding15,
-                            ),
-                            child: CustomClubCard(
-                              eventsCount: 3,
-                              membersCount: data.membersCount.toString(),
-                              imageUrl: data.img,
-                              title: data.title,
-                              subtitle:
-                                  "${data.membersCount}. ${AppStrings.members}",
-                              status: data.status,
-                              desc: data.desc,
-                            ),
+                          return CustomClubCard(
+                            eventsCount: 3,
+                            membersCount: data.membersCount.toString(),
+                            imageUrl: data.img,
+                            title: data.title,
+                            subtitle:
+                                "${data.membersCount}. ${AppStrings.members}",
+                            status: data.status,
+                            desc: data.desc,
                           );
                         },
                       ),

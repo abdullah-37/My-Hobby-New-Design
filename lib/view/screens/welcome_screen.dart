@@ -1,9 +1,8 @@
-import 'dart:ui';
-
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:hobby_club_app/utils/app_colors.dart';
-import 'package:hobby_club_app/utils/app_images.dart';
+import 'package:get/get.dart';
+import 'package:hobby_club_app/utils/dimensions.dart';
+import 'package:hobby_club_app/view/screens/club/club_details_page.dart';
+import 'package:hobby_club_app/view/screens/club/joined_club_detail_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -521,6 +520,8 @@ class WelcomeScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        automaticallyImplyLeading: false,
         title: const Text(
           'Clubs',
           style: TextStyle(
@@ -561,45 +562,52 @@ class WelcomeScreen extends StatelessWidget {
                   separatorBuilder: (_, __) => const SizedBox(width: 12),
                   itemBuilder: (context, index) {
                     final club = trendingClubs[index];
-                    return SizedBox(
-                      width: 160,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 1,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Image.asset(
-                                club['image']!,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Colors.grey[800],
-                                    child: const Icon(Icons.broken_image,
-                                        color: Colors.white),
-                                  );
-                                },
+                    return GestureDetector(
+                      onTap: () {
+                        Get.to(() => ClubDetailsPage());
+                      },
+                      child: SizedBox(
+                        width: 160,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 1,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Image.asset(
+                                  club['image']!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey[800],
+                                      child: const Icon(
+                                        Icons.broken_image,
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            club['title']!,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                              fontSize: 16,
+                            const SizedBox(height: 8),
+                            Text(
+                              club['title']!,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                          Text(
-                            club['members']!,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Color(0xFF9daebe),
+                            Text(
+                              club['members']!,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF9daebe),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -632,9 +640,10 @@ class WelcomeScreen extends StatelessWidget {
                         child: Column(
                           spacing: 5,
                           children: [
-                            Image.asset('${cat['icon']}',width: 40),
+                            Image.asset('${cat['icon']}', width: 40),
                             const SizedBox(width: 10),
-                            Text('${cat['title']}',
+                            Text(
+                              '${cat['title']}',
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -666,85 +675,106 @@ class WelcomeScreen extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     final club = clubs[index];
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  club['category']!,
-                                  style: const TextStyle(
-                                    color: Color(0xFF5C748A),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  club['title']!,
-                                  style: const TextStyle(
-                                    color: Color(0xFF101518),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  club['description']!,
-                                  style: const TextStyle(
-                                    color: Color(0xFF5C748A),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFEAEDF1),
-                                    foregroundColor: const Color(0xFF101518),
-                                    shape: const StadiumBorder(),
-                                    minimumSize: const Size(84, 32),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Join',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                    return GestureDetector(
+                      onTap: () {
+                        Get.to(() => JoinedClubDetailScreen(id: 1));
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            Dimensions.buttonRadius,
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            flex: 1,
-                            child: AspectRatio(
-                              aspectRatio: 10 / 9,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.asset(
-                                  club['image']!,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: Colors.grey[800],
-                                      child: const Icon(Icons.broken_image,
-                                          color: Colors.white),
-                                    );
-                                  },
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color.fromARGB(255, 231, 231, 231),
+                              blurRadius: 10,
+                              spreadRadius: 0.1,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    club['category']!,
+                                    style: const TextStyle(
+                                      color: Color(0xFF5C748A),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    club['title']!,
+                                    style: const TextStyle(
+                                      color: Color(0xFF101518),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    club['description']!,
+                                    style: const TextStyle(
+                                      color: Color(0xFF5C748A),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  // ElevatedButton(
+                                  //   onPressed: () {},
+                                  //   style: ElevatedButton.styleFrom(
+                                  //     backgroundColor: const Color(0xFFEAEDF1),
+                                  //     foregroundColor: const Color(0xFF101518),
+                                  //     shape: const StadiumBorder(),
+                                  //     minimumSize: const Size(84, 32),
+                                  //     padding: const EdgeInsets.symmetric(
+                                  //       horizontal: 16,
+                                  //     ),
+                                  //   ),
+                                  //   child: const Text(
+                                  //     'Join',
+                                  //     style: TextStyle(
+                                  //       fontSize: 14,
+                                  //       fontWeight: FontWeight.w500,
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              flex: 1,
+                              child: AspectRatio(
+                                aspectRatio: 10 / 9,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    club['image']!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        color: Colors.grey[800],
+                                        child: const Icon(
+                                          Icons.broken_image,
+                                          color: Colors.white,
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },

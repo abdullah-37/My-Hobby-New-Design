@@ -39,7 +39,7 @@ class DisussionDetailScreen extends StatelessWidget {
         child: Obx(
           () =>
               discussionDetailsController.isLoading.value
-                  ? const Center(
+                  ? Center(
                     child: CircularProgressIndicator(color: AppColors.primary),
                   )
                   : Column(
@@ -153,7 +153,7 @@ class DisussionDetailScreen extends StatelessWidget {
 
                                   isDense: true,
                                   hintText: "Type a Message",
-                                  hintStyle: const TextStyle(
+                                  hintStyle: TextStyle(
                                     color: AppColors.primary,
                                   ),
                                   fillColor: AppColors.primary.withValues(
@@ -182,7 +182,7 @@ class DisussionDetailScreen extends StatelessWidget {
                                   print('pppppppp empty text field');
                                 }
                               },
-                              child: const CircleAvatar(
+                              child: CircleAvatar(
                                 radius: 19,
                                 backgroundColor: AppColors.primary,
                                 child: Icon(
