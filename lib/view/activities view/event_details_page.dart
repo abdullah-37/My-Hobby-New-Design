@@ -22,7 +22,10 @@ class EventDetailsPage extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Color(0xFF111518)),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Color(0xFF111518),
+                      ),
                       onPressed: () => Get.back(),
                     ),
                     Expanded(
@@ -44,7 +47,7 @@ class EventDetailsPage extends StatelessWidget {
                   ],
                 ),
               ),
-          
+
               // Event Cover Image
               Container(
                 height: 218,
@@ -58,7 +61,7 @@ class EventDetailsPage extends StatelessWidget {
                   ),
                 ),
               ),
-          
+
               // Event Title and Description
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
@@ -83,7 +86,7 @@ class EventDetailsPage extends StatelessWidget {
                   ),
                 ),
               ),
-          
+
               // Details Section
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -107,7 +110,7 @@ class EventDetailsPage extends StatelessWidget {
                   ],
                 ),
               ),
-          
+
               // About the Event
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -132,7 +135,7 @@ class EventDetailsPage extends StatelessWidget {
                   ),
                 ),
               ),
-          
+
               // Organizer
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -147,7 +150,10 @@ class EventDetailsPage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Row(
                   children: [
                     Container(
@@ -187,7 +193,7 @@ class EventDetailsPage extends StatelessWidget {
                   ],
                 ),
               ),
-          
+
               // Attendees
               // Padding(
               //   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -225,7 +231,7 @@ class EventDetailsPage extends StatelessWidget {
               //     ],
               //   ),
               // ),
-          
+
               // Instructions
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -250,7 +256,7 @@ class EventDetailsPage extends StatelessWidget {
                   ),
                 ),
               ),
-          
+
               // Join Event Button
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -289,9 +295,7 @@ class EventDetailsPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: borderColor, width: 1),
-        ),
+        border: Border(top: BorderSide(color: borderColor, width: 1)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,19 +304,13 @@ class EventDetailsPage extends StatelessWidget {
             width: MediaQuery.of(Get.context!).size.width * 0.2,
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 14,
-                color: const Color(0xFF60768a),
-              ),
+              style: TextStyle(fontSize: 14, color: const Color(0xFF60768a)),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                fontSize: 14,
-                color: const Color(0xFF111518),
-              ),
+              style: TextStyle(fontSize: 14, color: const Color(0xFF111518)),
             ),
           ),
         ],

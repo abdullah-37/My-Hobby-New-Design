@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 class ThemeController extends GetxController {
   // Use ThemeMode.system as default
-  Rx<ThemeMode> themeMode = ThemeMode.system.obs;
+  Rx<ThemeMode> themeMode = ThemeMode.light.obs;
 
   bool get isDarkMode => themeMode.value == ThemeMode.dark;
 

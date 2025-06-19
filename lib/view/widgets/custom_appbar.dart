@@ -8,22 +8,30 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool centerTitle;
   final bool isLeading;
 
-  const CustomAppBar({super.key, required this.title, this.centerTitle = true, this.isLeading = true});
+  const CustomAppBar({
+    super.key,
+    required this.title,
+    this.centerTitle = true,
+    this.isLeading = true,
+  });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       scrolledUnderElevation: 0,
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.white,
       elevation: 0,
       centerTitle: centerTitle,
       title: Text(title, style: AppStyles.largeHeading),
-      leading: isLeading ?GestureDetector(
-        onTap: () {
-          Get.back();
-        },
-        child: Icon(Icons.arrow_back, color: Colors.white),
-      ):SizedBox.shrink(),
+      leading:
+          isLeading
+              ? GestureDetector(
+                onTap: () {
+                  Get.back();
+                },
+                child: Icon(Icons.arrow_back, color: Colors.black),
+              )
+              : SizedBox.shrink(),
       automaticallyImplyLeading: false,
     );
   }

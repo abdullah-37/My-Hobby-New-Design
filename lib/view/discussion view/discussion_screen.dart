@@ -45,7 +45,7 @@ class DiscussionScreen extends StatelessWidget {
                     ),
                   ),
                   discussionsController.isLoading.value
-                      ? const Expanded(
+                      ?  Expanded(
                         child: Center(
                           child: CircularProgressIndicator(
                             color: AppColors.primary,
@@ -114,7 +114,7 @@ class DiscussionScreen extends StatelessWidget {
                   );
                 },
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration:  BoxDecoration(
                     shape: BoxShape.circle,
                     color: AppColors.primary,
                   ),
@@ -167,7 +167,7 @@ class DiscussionWidget extends StatelessWidget {
             Container(
               width: 40,
               height: 40,
-              decoration: const BoxDecoration(
+              decoration:  BoxDecoration(
                 color: AppColors.primary,
                 shape: BoxShape.circle,
               ),

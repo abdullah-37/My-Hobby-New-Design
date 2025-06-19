@@ -4,7 +4,7 @@ class AppColors {
   static const Color background = Color(0xFF1a2831);
   // static const Color primary = Color(0xFFaf8645);
 
-  static const Color primary = Colors.black;
+  static Color primary = Colors.deepPurple.shade300;
   static const Color secondary = Color(0xFFDDE2DA);
   static const Color inputHintText = Colors.grey;
   static const Color white = Colors.white;

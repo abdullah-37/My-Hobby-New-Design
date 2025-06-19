@@ -5,7 +5,6 @@ import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/app_images.dart';
 import 'package:hobby_club_app/utils/constants.dart';
 
-
 class TypeMessageBox extends StatelessWidget {
   final ChatControllers chatControllers;
   final Function() sendMessage;
@@ -43,7 +42,7 @@ class TypeMessageBox extends StatelessWidget {
                             AppImages.cameraIcon,
                             height: 28,
                           ),
-                          title: const Text(
+                          title: Text(
                             'Camera',
                             style: TextStyle(
                               color: AppColors.primary,
@@ -62,7 +61,7 @@ class TypeMessageBox extends StatelessWidget {
                             AppImages.galleryIcon,
                             height: 28,
                           ),
-                          title: const Text(
+                          title: Text(
                             'Gallery',
                             style: TextStyle(
                               color: AppColors.primary,
@@ -110,7 +109,7 @@ class TypeMessageBox extends StatelessWidget {
 
                 isDense: true,
                 hintText: "Type a Message",
-                hintStyle: const TextStyle(color: AppColors.primary),
+                hintStyle: TextStyle(color: AppColors.primary),
                 fillColor: AppColors.primary.withValues(alpha: 0.1),
                 filled: true,
                 border: OutlineInputBorder(
@@ -138,32 +137,35 @@ class TypeMessageBox extends StatelessWidget {
                       child: child,
                     );
                   },
-                  child: chatControllers.messageText.value.trim().isNotEmpty
-                      ? GestureDetector(
-                          onTap: () {
-                            // print('oooooooo');
-                            sendMessage();
-                          },
-                          child: Icon(
-                            Icons.send,
-                            size: 20,
-                            color: Colors.white,
+                  child:
+                      chatControllers.messageText.value.trim().isNotEmpty
+                          ? GestureDetector(
+                            onTap: () {
+                              // print('oooooooo');
+                              sendMessage();
+                            },
+                            child: Icon(
+                              Icons.send,
+                              size: 20,
+                              color: Colors.white,
 
+                              key: ValueKey<bool>(
+                                chatControllers.messageText.value
+                                    .trim()
+                                    .isNotEmpty,
+                              ),
+                            ),
+                          )
+                          : Icon(
+                            Icons.mic,
+                            color: Colors.white,
+                            size: 20,
                             key: ValueKey<bool>(
                               chatControllers.messageText.value
                                   .trim()
                                   .isNotEmpty,
                             ),
                           ),
-                        )
-                      : Icon(
-                          Icons.mic,
-                          color: Colors.white,
-                          size: 20,
-                          key: ValueKey<bool>(
-                            chatControllers.messageText.value.trim().isNotEmpty,
-                          ),
-                        ),
                   // child: Icon(
                   //   chatControllers.messageText.value.trim().isNotEmpty
                   //       ? Icons.send

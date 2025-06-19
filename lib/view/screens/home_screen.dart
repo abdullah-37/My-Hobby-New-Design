@@ -1,11 +1,11 @@
-// main_page.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hobby_club_app/controller/navigation_controller.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
+import 'package:hobby_club_app/utils/app_images.dart';
 import 'package:hobby_club_app/view/activities%20view/event_screen.dart.dart';
 import 'package:hobby_club_app/view/calender_view/calender.dart';
-import 'package:hobby_club_app/view/screens/posts/post_screen.dart';
+import 'package:hobby_club_app/view/screens/profile/profile_screen.dart';
 import 'package:hobby_club_app/view/screens/welcome_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -17,37 +17,59 @@ class HomeScreen extends StatelessWidget {
     WelcomeScreen(),
     EventsScreen(),
     CustomCalendar(),
-    PostScreen(),
-    // CustomCalendar(),
-    // ProfileScreen(),
-  ];
-
-  final List<BottomNavigationBarItem> items = const [
-    BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-    BottomNavigationBarItem(icon: Icon(Icons.event_available), label: "Events"),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.calendar_month),
-      label: "Calender",
-    ),
-    BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
+    ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Scaffold(
+    return Obx(() {
+      final int selectedIndex = navController.currentIndex.value;
+
+      return Scaffold(
         backgroundColor: AppColors.white,
-        body: pages[navController.currentIndex.value],
+        body: pages[selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
+          selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
           backgroundColor: AppColors.white,
-          currentIndex: navController.currentIndex.value,
+          currentIndex: selectedIndex,
           onTap: navController.changeTab,
-          items: items,
+          type: BottomNavigationBarType.fixed,
           selectedItemColor: AppColors.primary,
           unselectedItemColor: Colors.grey,
-          type: BottomNavigationBarType.fixed,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          items: [
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                selectedIndex == 0 ? AppImages.house : AppImages.houseun,
+                height: 25,
+              ),
+              label: "Home",
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                selectedIndex == 1 ? AppImages.events : AppImages.eventsun,
+                height: 25,
+              ),
+              label: "Events",
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                selectedIndex == 2 ? AppImages.calender : AppImages.calenderun,
+                height: 25,
+              ),
+              label: "Calendar",
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                selectedIndex == 3 ? AppImages.setting : AppImages.settingun,
+                height: 25,
+              ),
+              label: "Settings",
+            ),
+          ],
         ),
-      ),
-    );
+      );
+    });
   }
 }

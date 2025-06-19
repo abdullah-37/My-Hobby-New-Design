@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hobby_club_app/controller/hide_floating_button_controller.dart';
 import 'package:hobby_club_app/controller/localization_controller.dart';
 import 'package:hobby_club_app/controller/notifications_controller.dart';
 import 'package:hobby_club_app/controller/theme_controller.dart';
@@ -30,6 +31,7 @@ Future<void> main() async {
   ))();
   await GetStorage.init();
   Get.put(NotificationsController());
+  Get.put(FloatingButtonController());
 
   runApp(const MyApp());
 }
@@ -46,6 +48,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final themeController = Get.put(ThemeController());
     LocaleController localeController = Get.put(LocaleController());
+    final floatingController = Get.find<FloatingButtonController>();
 
     return Obx(() {
       return GetMaterialApp(
@@ -62,44 +65,55 @@ class _MyAppState extends State<MyApp> {
           return Stack(
             children: [
               Obx(() {
-                final isDark = themeController.isDarkMode;
+                // if (!floatingController.isVisible.value)
+                //   return const SizedBox();
+
+                final isDark =
+                    themeController.themeMode.value == ThemeMode.dark;
+                final screenWidth = MediaQuery.of(context).size.width;
+                final screenHeight = MediaQuery.of(context).size.height;
 
                 return FloatingDraggableWidget(
                   autoAlign: true,
-                  dx: 1,
-                  dy: 70,
-                  floatingWidget: ClipRRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          color: Colors.white.withValues(alpha: 0.1),
-
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            themeController.toggleTheme();
-                          },
-                          child:
-                              isDark
-                                  ? const Icon(
-                                    Icons.wb_sunny,
-                                    color: Colors.yellow,
-                                    size: 30,
-                                  )
-                                  : const Icon(
-                                    Icons.nightlight_round,
-                                    size: 30,
-                                    color: Colors.indigo,
+                  dx:
+                      screenWidth -
+                      52, // push it near right edge (screen width - widget width - margin)
+                  dy: screenHeight - 130,
+                  floatingWidget:
+                      floatingController.isVisible.value
+                          ? ClipRRect(
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Theme.of(context).primaryColor,
                                   ),
-                        ),
-                      ),
-                    ),
-                  ),
+                                  color: Colors.white.withValues(alpha: 0.1),
+
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    themeController.toggleTheme();
+                                  },
+                                  child:
+                                      isDark
+                                          ? const Icon(
+                                            Icons.wb_sunny,
+                                            color: Colors.yellow,
+                                            size: 30,
+                                          )
+                                          : const Icon(
+                                            Icons.nightlight_round,
+                                            size: 30,
+                                            color: Colors.indigo,
+                                          ),
+                                ),
+                              ),
+                            ),
+                          )
+                          : SizedBox.shrink(),
                   floatingWidgetWidth: 50,
                   floatingWidgetHeight: 50,
                   mainScreenWidget: child!, // <- Not used here
