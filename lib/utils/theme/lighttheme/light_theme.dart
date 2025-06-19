@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 final ThemeData lightTheme = ThemeData(
   fontFamily: 'Poppins',
   primaryColor: Colors.deepPurple.shade300,
-
   scaffoldBackgroundColor: Colors.white,
+  appBarTheme: AppBarTheme(backgroundColor: Colors.white),
+  iconTheme: const IconThemeData(color: Colors.white),
   useMaterial3: true,
   textTheme: const TextTheme(
     displayLarge: TextStyle(
@@ -67,5 +68,5 @@ final ThemeData lightTheme = ThemeData(
       borderRadius: BorderRadius.circular(10.0),
       borderSide: BorderSide(color: Colors.red, width: 2.0),
     ),
-  ),
+  ), bottomAppBarTheme: BottomAppBarTheme(color: Colors.white),
 );

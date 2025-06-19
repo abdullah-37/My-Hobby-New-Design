@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 final ThemeData darkTheme = ThemeData(
   fontFamily: 'Poppins',
-  scaffoldBackgroundColor: Colors.black,
+  scaffoldBackgroundColor: Color(0xFF141a1f),
+  appBarTheme: AppBarTheme(backgroundColor: Color(0xFF141a1f)),
+  iconTheme: const IconThemeData(color: Color(0xFF141a1f)),
   useMaterial3: true,
   textTheme: TextTheme(
     displayLarge: TextStyle(
@@ -41,5 +43,5 @@ final ThemeData darkTheme = ThemeData(
       fontWeight: FontWeight.w600,
       color: Colors.black,
     ),
-  ),
+  ), bottomAppBarTheme: BottomAppBarTheme(color: Colors.black),
 );

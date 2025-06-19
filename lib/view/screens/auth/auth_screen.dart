@@ -70,7 +70,7 @@ class AuthScreen extends StatelessWidget {
               ],
             ),
           ),
-          Positioned(top: 40, right: 20, child: ThemeToggleButton()),
+          // Positioned(top: 40, right: 20, child: ThemeToggleButton()),
         ],
       ),
     );
