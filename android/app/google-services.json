@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "223000730544",
+    "project_id": "hobby-club-405fc",
+    "storage_bucket": "hobby-club-405fc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223000730544:android:74d162401a41a3c2311475",
+        "android_client_info": {
+          "package_name": "com.example.hobby_club_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLYisSxCRBoj08-dZbEW9m6ANhvLZg-PM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
