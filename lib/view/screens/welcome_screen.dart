@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hobby_club_app/view/gamification/gamification_page.dart';
 import 'package:hobby_club_app/view/screens/club/club_details_page.dart';
 import 'package:hobby_club_app/view/screens/club/joined_club_detail_screen.dart';
 
@@ -630,18 +631,23 @@ class WelcomeScreen extends StatelessWidget {
                     itemCount: exploreCategories.length,
                     itemBuilder: (context, index) {
                       final cat = exploreCategories[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          spacing: 5,
-                          children: [
-                            Image.asset('${cat['icon']}', width: 40),
-                            const SizedBox(width: 10),
-                            Text(
-                              '${cat['title']}',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                          ],
+                      return InkWell(
+                        onTap: (){
+                          Get.to(() => GamificationPage());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(
+                            spacing: 5,
+                            children: [
+                              Image.asset('${cat['icon']}', width: 40),
+                              const SizedBox(width: 10),
+                              Text(
+                                '${cat['title']}',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
