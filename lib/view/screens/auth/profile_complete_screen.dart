@@ -236,10 +236,9 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
 
                         SizedBox(height: Dimensions.height30),
 
-                        CustomButton(
-                          isLoading: controller.isLoading,
-                          text: AppStrings.save,
-                          onPressed: controller.submitProfile,
+                        CustomElevatedButton(
+                          title: AppStrings.save,
+                          onTap: controller.submitProfile,
                         ),
 
                         SizedBox(height: Dimensions.height20),

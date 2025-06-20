@@ -7,7 +7,6 @@ import 'package:hobby_club_app/models/auth/profile_model.dart';
 import 'package:hobby_club_app/models/response_model.dart';
 import 'package:hobby_club_app/repo/profile_repo.dart';
 import 'package:hobby_club_app/utils/app_strings.dart';
-import 'package:hobby_club_app/view/screens/auth/country_language_selection_screen.dart';
 import 'package:hobby_club_app/view/widgets/custom_snackbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -93,7 +92,7 @@ class ProfileCompleteController extends GetxController {
         );
         debugPrint(response.responseJson);
         if (response.isSuccess) {
-          Get.offAll(() => CountryLanguageSelectionScreen());
+          // Get.offAll(() => CountryLanguageSelectionScreen());
           showCustomSnackBar(AppStrings.success, response.message);
         } else {
           showCustomSnackBar(AppStrings.error, response.message);

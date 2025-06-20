@@ -156,7 +156,10 @@ class _CustomCalendarState extends State<CustomCalendar> {
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withValues(alpha: 0.3),
+                            color:
+                                isDark
+                                    ? Colors.transparent
+                                    : Colors.grey.withValues(alpha: 0.3),
                             blurRadius: 10,
                             spreadRadius: 2,
                             offset: const Offset(0, 5),

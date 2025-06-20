@@ -160,6 +160,7 @@ import 'package:hobby_club_app/utils/theme/theme_helper.dart';
 import 'package:hobby_club_app/view/screens/auth/forgot_password_screen.dart';
 import 'package:hobby_club_app/view/screens/auth/sign_up_screen.dart';
 import 'package:hobby_club_app/view/screens/home_screen.dart';
+import 'package:hobby_club_app/view/widgets/custom_button.dart';
 import 'package:hobby_club_app/view/widgets/header_widget.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -176,7 +177,7 @@ class _LoginPageState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -201,10 +202,9 @@ class _LoginPageState extends State<LoginScreen> {
                   children: [
                     Text(
                       'Welcome',
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.displayLarge!.copyWith(fontSize: 40),
                     ),
                     Text(
                       'Signin into your account',
@@ -265,34 +265,11 @@ class _LoginPageState extends State<LoginScreen> {
                           ),
                           SizedBox(height: 20.0),
 
-                          Container(
-                            decoration: ThemeHelper().buttonBoxDecoration(
-                              context,
-                            ),
-                            child: ElevatedButton(
-                              style: ThemeHelper().buttonStyle(),
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
-                                child: Text(
-                                  'Sign In'.toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {
-                                Get.to(() => HomeScreen());
-                                // //After successful login we will redirect to profile page. Let's create profile page now
-                                // Navigator.pushReplacement(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => ProfilePage(),
-                                //   ),
-                                // );
-                              },
-                            ),
+                          CustomElevatedButton(
+                            title: 'Sign In',
+                            onTap: () {
+                              Get.to(() => HomeScreen());
+                            },
                           ),
                           Container(
                             margin: EdgeInsets.fromLTRB(10, 20, 10, 20),

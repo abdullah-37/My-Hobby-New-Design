@@ -124,18 +124,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             Text(
                               'Muhammad Abdullah',
-                              style: AppStyles.largeHeading.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: Theme.of(context).textTheme.displayLarge,
                             ),
-                            if (controller.profile.userName != null)
-                              Text(
-                                'efefefre',
-                                style: AppStyles.body.copyWith(
-                                  color: Colors.black,
-                                  fontSize: 106,
-                                ),
-                              ),
+
                             SizedBox(height: Dimensions.height20),
                             SingleChildScrollView(
                               child: Column(
@@ -148,11 +139,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     children: [
                                       Text(
                                         'Profile Details',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.titleMedium,
                                       ),
                                       InkWell(
                                         onTap: () {
@@ -186,10 +176,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                               Text(
                                                 user?.email ?? 'Not provided',
-                                                style: AppStyles.body.copyWith(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
-                                                ),
+                                                style:
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.labelLarge,
                                               ),
                                             ],
                                           ),
@@ -203,10 +193,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                               Text(
                                                 user?.phone ?? 'Not provided',
-                                                style: AppStyles.body.copyWith(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
-                                                ),
+                                                style:
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.labelLarge,
                                               ),
                                             ],
                                           ),
@@ -228,10 +218,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               Text(
                                                 controller.profile.dob ??
                                                     'Not provided',
-                                                style: AppStyles.body.copyWith(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
-                                                ),
+                                                style:
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.labelLarge,
                                               ),
                                             ],
                                           ),
@@ -248,10 +238,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               Text(
                                                 controller.profile.gender ??
                                                     'Not provided',
-                                                style: AppStyles.body.copyWith(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
-                                                ),
+                                                style:
+                                                    Theme.of(
+                                                      context,
+                                                    ).textTheme.labelLarge,
                                               ),
                                             ],
                                           ),
@@ -299,11 +289,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         alignment: AlignmentDirectional.centerStart,
                         child: Text(
                           'My Clubs',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
                       SizedBox(height: Dimensions.height10),
@@ -324,7 +310,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(30),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withValues(alpha: 0.3),
+                                  color:
+                                      isDark
+                                          ? Colors.transparent
+                                          : Colors.grey.withValues(alpha: 0.3),
                                   blurRadius: 10,
                                   spreadRadius: 2,
                                   offset: const Offset(0, 5),
@@ -411,11 +400,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         alignment: AlignmentDirectional.centerStart,
                         child: Text(
                           'Settings',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleMedium!.copyWith(fontSize: 28),
                         ),
                       ),
                       SizedBox(height: Dimensions.height10),
@@ -424,14 +411,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           Row(
                             children: [
-                              Text('Language', style: AppStyles.body),
+                              Text(
+                                'Language',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
                               Spacer(),
                               Text('English', style: AppStyles.greysubtitle),
                             ],
                           ),
                           Row(
                             children: [
-                              Text('Region', style: AppStyles.body),
+                              Text(
+                                'Region',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
                               Spacer(),
                               Text('Pakistan', style: AppStyles.greysubtitle),
                             ],
@@ -439,7 +432,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Obx(
                             () => Row(
                               children: [
-                                Text('Notifications', style: AppStyles.body),
+                                Text(
+                                  'Notifications',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
                                 const Spacer(),
                                 CupertinoSwitch(
                                   value:
@@ -461,7 +457,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Obx(
                             () => Row(
                               children: [
-                                Text('Floating Button', style: AppStyles.body),
+                                Text(
+                                  'Floating Button',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
                                 const Spacer(),
                                 CupertinoSwitch(
                                   value: floatingController.isVisible.value,
@@ -477,10 +476,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                       SizedBox(height: 10),
-                      CustomButton(
-                        text: AppStrings.logout,
-                        color: Colors.redAccent,
-                        onPressed: () {
+                      CustomElevatedButton(
+                        title: AppStrings.logout,
+                        onTap: () {
                           Get.dialog(
                             AlertDialog(
                               title: const Text("Confirm Logout"),

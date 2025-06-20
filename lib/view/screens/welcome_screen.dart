@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/view/screens/club/club_details_page.dart';
 import 'package:hobby_club_app/view/screens/club/joined_club_detail_screen.dart';
 
@@ -552,43 +551,48 @@ class WelcomeScreen extends StatelessWidget {
                   separatorBuilder: (_, __) => const SizedBox(width: 12),
                   itemBuilder: (context, index) {
                     final club = trendingClubs[index];
-                    return SizedBox(
-                      width: 160,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 1,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Image.asset(
-                                club['image']!,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Colors.grey[800],
-                                    child: const Icon(
-                                      Icons.broken_image,
-                                      color: Colors.white,
-                                    ),
-                                  );
-                                },
+                    return GestureDetector(
+                      onTap: () {
+                        Get.to(() => ClubDetailsPage());
+                      },
+                      child: SizedBox(
+                        width: 160,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 1,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Image.asset(
+                                  club['image']!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey[800],
+                                      child: const Icon(
+                                        Icons.broken_image,
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            club['title']!,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          Text(
-                            club['members']!,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Color(0xFF9daebe),
+                            const SizedBox(height: 8),
+                            Text(
+                              club['title']!,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
-                          ),
-                        ],
+                            Text(
+                              club['members']!,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF9daebe),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -631,7 +635,7 @@ class WelcomeScreen extends StatelessWidget {
                         child: Column(
                           spacing: 5,
                           children: [
-                            Image.asset('${cat['icon']}',width: 40),
+                            Image.asset('${cat['icon']}', width: 40),
                             const SizedBox(width: 10),
                             Text(
                               '${cat['title']}',
@@ -660,83 +664,102 @@ class WelcomeScreen extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     final club = clubs[index];
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  club['category']!,
-                                  style: const TextStyle(
-                                    color: Color(0xFF5C748A),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  club['title']!,
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  club['description']!,
-                                  style: const TextStyle(
-                                    color: Color(0xFF5C748A),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.to(() => JoinedClubDetailScreen());
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).primaryColor.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Members: ${club['members']!}',
+                                      club['category']!,
                                       style: const TextStyle(
                                         color: Color(0xFF5C748A),
                                         fontSize: 14,
                                       ),
                                     ),
+                                    const SizedBox(height: 4),
                                     Text(
-                                      'Events: ${club['events']!}',
+                                      club['title']!,
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      club['description']!,
                                       style: const TextStyle(
                                         color: Color(0xFF5C748A),
                                         fontSize: 14,
                                       ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Members: ${club['members']!}',
+                                          style: const TextStyle(
+                                            color: Color(0xFF5C748A),
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Events: ${club['events']!}',
+                                          style: const TextStyle(
+                                            color: Color(0xFF5C748A),
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            flex: 1,
-                            child: AspectRatio(
-                              aspectRatio: 10 / 9,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.asset(
-                                  club['image']!,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: Colors.grey[800],
-                                      child: const Icon(
-                                        Icons.broken_image,
-                                        color: Colors.white,
-                                      ),
-                                    );
-                                  },
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                flex: 1,
+                                child: AspectRatio(
+                                  aspectRatio: 10 / 9,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.asset(
+                                      club['image']!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Container(
+                                          color: Colors.grey[800],
+                                          child: const Icon(
+                                            Icons.broken_image,
+                                            color: Colors.white,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     );
                   },

@@ -26,11 +26,11 @@ class HomeScreen extends StatelessWidget {
       final int selectedIndex = navController.currentIndex.value;
 
       return Scaffold(
-        backgroundColor: AppColors.white,
+        // backgroundColor: AppColors.white,
         body: pages[selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-          backgroundColor: AppColors.white,
+          // backgroundColor: AppColors.white,
           currentIndex: selectedIndex,
           onTap: navController.changeTab,
           type: BottomNavigationBarType.fixed,

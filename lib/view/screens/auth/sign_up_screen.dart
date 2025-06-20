@@ -228,7 +228,7 @@ class _RegistrationPageState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Stack(
           children: [
@@ -286,10 +286,9 @@ class _RegistrationPageState extends State<SignUpScreen> {
                         SizedBox(height: 10),
                         Text(
                           'Create Account',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.displayLarge!.copyWith(fontSize: 40),
                         ),
                         // SizedBox(height: 30),
                         // Container(

@@ -34,13 +34,10 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
         padding: Dimensions.screenPaddingHV,
         child: GetBuilder<CreateClubController>(
           builder:
-              (controller) =>
-                  controller.submitLoading
-                      ? CustomLoadingButton()
-                      : CustomButton(
-                        text: AppStrings.createClub,
-                        onPressed: controller.createClub,
-                      ),
+              (controller) => CustomElevatedButton(
+                title: AppStrings.createClub,
+                onTap: controller.createClub,
+              ),
         ),
       ),
       body: GetBuilder<CreateClubController>(

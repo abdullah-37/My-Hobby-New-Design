@@ -41,11 +41,7 @@ class EventWidget extends StatelessWidget {
                     ),
                     Text(
                       event['title'] ?? '',
-                      style: TextStyle(
-                        color: Color(0xFF121416),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
                       event['location'] ?? '',

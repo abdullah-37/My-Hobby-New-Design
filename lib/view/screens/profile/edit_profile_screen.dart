@@ -182,13 +182,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     },
                   ),
                   SizedBox(height: Dimensions.height60),
-
-                  controller.isLoading
-                      ? CustomLoadingButton()
-                      : CustomButton(
-                        text: AppStrings.save,
-                        onPressed: controller.saveProfile,
-                      ),
+                  CustomElevatedButton(
+                    title: AppStrings.save,
+                    onTap: controller.saveProfile,
+                  ),
                 ],
               ),
             );

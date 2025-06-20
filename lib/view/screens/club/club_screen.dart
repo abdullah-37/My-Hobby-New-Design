@@ -36,9 +36,9 @@ class _ClubScreenState extends State<ClubScreen> {
         appBar: CustomAppBar(title: AppStrings.clubs),
         bottomNavigationBar: Padding(
           padding: Dimensions.screenPaddingHV,
-          child: CustomButton(
-            text: AppStrings.createClub,
-            onPressed: () {
+          child: CustomElevatedButton(
+            title: AppStrings.createClub,
+            onTap: () {
               Get.to(() => CreateClubScreen());
             },
           ),

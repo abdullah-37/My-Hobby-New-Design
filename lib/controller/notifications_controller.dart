@@ -11,7 +11,8 @@ class NotificationsController extends GetxController {
   }
 
   void initialize() async {
-    String appId = 'd1f939ba-b06b-44fd-aab4-2140a63ea4bf';
+    // String appId = 'd1f939ba-b06b-44fd-aab4-2140a63ea4bf';
+    String appId = 'fe12d7bc-0419-455f-bf18-b2a30c859e03';
     String userId = '123456';
     OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
 

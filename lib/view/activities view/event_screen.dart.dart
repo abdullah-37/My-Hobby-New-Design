@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/view/activities%20view/widgets/event_widget.dart';
+import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 
 class EventsScreen extends StatelessWidget {
   EventsScreen({super.key});
@@ -83,21 +84,8 @@ class EventsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Events',
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ),
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
-      ),
-      backgroundColor: Colors.white,
+      appBar: CustomAppBar(title: 'Events'),
+      // backgroundColor: Colors.white,
       body: Padding(
         padding: Dimensions.screenPaddingHorizontal,
         child: ListView.builder(

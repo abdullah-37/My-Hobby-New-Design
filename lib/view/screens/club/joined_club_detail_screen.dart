@@ -1,241 +1,595 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/club/book_club_controller.dart';
-import 'package:hobby_club_app/controller/post/like_controller.dart';
-import 'package:hobby_club_app/models/club/all_clubs_model.dart';
-import 'package:hobby_club_app/models/club/club_model.dart';
-import 'package:hobby_club_app/utils/app_strings.dart';
-import 'package:hobby_club_app/utils/dimensions.dart';
-import 'package:hobby_club_app/utils/style.dart';
-import 'package:hobby_club_app/view/chat%20view/chat_screen.dart';
-import 'package:hobby_club_app/view/screens/posts/comments_screen.dart';
+import 'package:flutter/services.dart';
+import 'package:hobby_club_app/models/club/club_feed_model.dart';
+import 'package:hobby_club_app/view/widgets/cretae_post_widget.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
-import 'package:hobby_club_app/view/widgets/custom_button.dart';
-import 'package:hobby_club_app/view/widgets/custom_network_image.dart';
+
+// Your existing model classes would go here
+// ClubFeedModel, Data, Comment, CommentProfile, DataProfile
 
 class JoinedClubDetailScreen extends StatefulWidget {
-  final int id;
-  const JoinedClubDetailScreen({super.key, required this.id});
+  const JoinedClubDetailScreen({super.key});
 
   @override
-  State<JoinedClubDetailScreen> createState() => _BookClubScreenState();
+  State<JoinedClubDetailScreen> createState() => _ClubFeedsScreenState();
 }
 
-class _BookClubScreenState extends State<JoinedClubDetailScreen> {
+class _ClubFeedsScreenState extends State<JoinedClubDetailScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  final ScrollController _scrollController = ScrollController();
+
+  // Sample data for demonstration
+  List<Data> feedData = [
+    Data(
+      id: 1,
+      likes: 24,
+      isLike: false,
+      image: "https://picsum.photos/400/300?random=1",
+      desc:
+          "Just finished an amazing workout session! Feeling energized and ready to take on the world. 💪 #FitnessMotivation #ClubLife",
+      updatedAt: "2024-06-20T10:30:00Z",
+      profile: DataProfile(
+        userName: "fitness_guru",
+        firstName: "Sarah",
+        lastName: "Johnson",
+        img: "https://picsum.photos/150/150?random=person1",
+      ),
+      comments: [
+        Comment(
+          id: 1,
+          comment: "Inspiring! Keep it up! 🔥",
+          userId: 2,
+          updatedAt: "2024-06-20T11:00:00Z",
+          profile: CommentProfile(
+            userName: "mike_runner",
+            img: "https://picsum.photos/150/150?random=person2",
+          ),
+        ),
+        Comment(
+          id: 2,
+          comment: "Great motivation for my evening workout!",
+          userId: 3,
+          updatedAt: "2024-06-20T11:15:00Z",
+          profile: CommentProfile(
+            userName: "anna_yoga",
+            img: "https://picsum.photos/150/150?random=person3",
+          ),
+        ),
+      ],
+    ),
+    Data(
+      id: 2,
+      likes: 156,
+      isLike: true,
+      image: "https://picsum.photos/400/300?random=2",
+      desc:
+          "Beautiful sunset from today's hiking adventure! Nature never fails to amaze me. 🌅 Who wants to join next time?",
+      updatedAt: "2024-06-20T08:45:00Z",
+      profile: DataProfile(
+        userName: "adventure_seeker",
+        firstName: "David",
+        lastName: "Chen",
+        img: "https://picsum.photos/150/150?random=person4",
+      ),
+      comments: [
+        Comment(
+          id: 3,
+          comment: "Count me in for the next adventure!",
+          userId: 4,
+          updatedAt: "2024-06-20T09:00:00Z",
+          profile: CommentProfile(
+            userName: "trail_blazer",
+            img: "https://picsum.photos/150/150?random=person5",
+          ),
+        ),
+      ],
+    ),
+    Data(
+      id: 3,
+      likes: 89,
+      isLike: false,
+      image: null,
+      desc:
+          "Just read an incredible book about personal development. 'The only way to do great work is to love what you do.' - Steve Jobs. What's everyone reading lately? 📚✨",
+      updatedAt: "2024-06-19T20:30:00Z",
+      profile: DataProfile(
+        userName: "book_lover",
+        firstName: "Emma",
+        lastName: "Williams",
+        img: "https://picsum.photos/150/150?random=person6",
+      ),
+      comments: [
+        Comment(
+          id: 4,
+          comment: "Love that quote! Currently reading 'Atomic Habits'",
+          userId: 5,
+          updatedAt: "2024-06-19T21:00:00Z",
+          profile: CommentProfile(
+            userName: "habit_builder",
+            img: "https://picsum.photos/150/150?random=person7",
+          ),
+        ),
+        Comment(
+          id: 5,
+          comment: "Thanks for the recommendation!",
+          userId: 6,
+          updatedAt: "2024-06-19T21:30:00Z",
+          profile: CommentProfile(
+            userName: "reader_pro",
+            img: "https://picsum.photos/150/150?random=person8",
+          ),
+        ),
+      ],
+    ),
+  ];
+
   @override
   void initState() {
-    Get.put(BookClubController());
-    Get.put(LikeController());
-    Get.find<BookClubController>().fetchClubFeed(widget.id);
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  String _formatTimeAgo(String dateTime) {
+    final now = DateTime.now();
+    final date = DateTime.parse(dateTime);
+    final difference = now.difference(date);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
+  void _toggleLike(int index) {
+    setState(() {
+      feedData[index].isLike = !feedData[index].isLike;
+      if (feedData[index].isLike) {
+        feedData[index].likes++;
+      } else {
+        feedData[index].likes--;
+      }
+    });
+    HapticFeedback.lightImpact();
+  }
+
+  void _showCommentsBottomSheet(Data data) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _buildCommentsBottomSheet(data),
+    );
+  }
+
+  Widget _buildCommentsBottomSheet(Data data) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.comment_outlined, color: Colors.deepPurple),
+                const SizedBox(width: 8),
+                Text(
+                  'Comments (${data.comments.length})',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
+                ),
+                const Spacer(),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: data.comments.length,
+              itemBuilder: (context, index) {
+                final comment = data.comments[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(comment.profile.img),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                comment.profile.userName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepPurple,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(comment.comment),
+                              const SizedBox(height: 4),
+                              Text(
+                                _formatTimeAgo(comment.updatedAt),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 18,
+                  backgroundImage: NetworkImage(
+                    "https://picsum.photos/150/150?random=currentuser",
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Add a comment...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.deepPurple, Colors.purple],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.send, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final argument = Get.arguments;
-    final allClub = argument is AllClub ? argument : null;
-    final club = argument is Club ? argument : null;
-
     return Scaffold(
-      appBar: const CustomAppBar(title: AppStrings.bookClub, isLeading: true),
-      bottomNavigationBar: Padding(
-        padding: Dimensions.screenPaddingHV,
-        child: CustomButton(
-          text: AppStrings.message,
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(right: 16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).primaryColor,
+              Theme.of(context).colorScheme.secondary,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: IconButton(
           onPressed: () {
-            Get.to(() => ChatScreen());
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder:
+                  (context) => CreatePostDialog(
+                    onPostCreated: (description, imagePath) {
+                      // Handle the created post
+                      print('Post created: $description');
+                      if (imagePath != null) {
+                        print('Image: $imagePath');
+                      }
+                      // Add the post to your feed data
+                      // Refresh your feed UI
+                    },
+                  ),
+            );
           },
+
+          icon: const Icon(Icons.add, color: Colors.white),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.zero,
-        child: GetBuilder<BookClubController>(
-          builder: (controller) {
-            if (controller.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      // backgroundColor: Colors.grey[50],
+      appBar: CustomAppBar(title: 'Club Name'),
+      //   centerTitle: false,
+      //   actions: [
+      //     Container(
+      //       margin: const EdgeInsets.only(right: 16),
+      //       decoration: BoxDecoration(
+      //         gradient: const LinearGradient(
+      //           colors: [Colors.deepPurple, Colors.purple],
+      //         ),
+      //         borderRadius: BorderRadius.circular(12),
+      //       ),
+      //       child: IconButton(s
+      //         onPressed: () {},
+      //         icon: const Icon(Icons.add, color: Colors.white),
+      //       ),
+      //     ),
+      //   ],
+      // ),
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await Future.delayed(const Duration(seconds: 1));
+            setState(() {});
+          },
+          color: Theme.of(context).primaryColor,
+          child: ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: feedData.length,
+            itemBuilder: (context, index) {
+              return _buildFeedCard(feedData[index], index);
+            },
+          ),
+        ),
+      ),
+    );
+  }
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: Dimensions.screenPaddingHV,
-                  child: Column(
-                    children: [
-                      // CustomClubCard(
-                      //   eventsCount: 3,
-                      //   membersCount:
-                      //       (allClub?.totalMembers ?? club?.membersCount ?? '0')
-                      //           .toString(),
-                      //   imageUrl: club?.img ?? allClub?.img ?? '',
-                      //   title: allClub?.title ?? club?.title ?? 'No Title',
-                      //   subtitle:
-                      //       '${allClub?.totalMembers ?? club?.membersCount ?? '0'} ${AppStrings.members}',
-                      //   status: '',
-                      //   desc: club?.desc ?? allClub?.desc ?? 'No description',
-                      // ),
-                      // SizedBox(height: Dimensions.height20),
-                      // Align(
-                      //   alignment: AlignmentDirectional.centerStart,
-                      //   child: Text(
-                      //     'Description:',
-                      //     style: TextStyle(color: AppColors.primary,fontSize: 20,fontWeight: FontWeight.bold),
-                      //   ),
-                      // ),
-                      // Text(
-                      //   club?.desc ?? allClub?.desc ?? 'No description',
-                      //   style: AppStyles.body,
-                      // ),
-                    ],
+  Widget _buildFeedCard(Data data, int index) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.deepPurple.withOpacity(0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 22,
+                      backgroundImage: NetworkImage(data.profile.img),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${data.profile.firstName} ${data.profile.lastName}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Text(
+                          '@${data.profile.userName}',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    _formatTimeAgo(data.updatedAt),
+                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.more_vert, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+
+            // Content
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                data.desc,
+                style: const TextStyle(
+                  fontSize: 15,
+                  height: 1.4,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+
+            // Image (if exists)
+            if (data.image != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: NetworkImage(data.image!),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Padding(
-                  padding: Dimensions.screenPaddingHV,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 2,
-                    itemBuilder: (context, index) {
-                      final data = controller.clubFeedModel?.data[index];
-                      if (data == null) return const SizedBox();
+              ),
+            ],
 
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: Dimensions.padding30),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CustomNetworkImage(
-                                  size: Dimensions.width60,
-                                  imageUrl: data.profile.img ?? '',
-                                ),
-                                SizedBox(width: Dimensions.width5),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "${data.profile.firstName ?? ''} ${data.profile.lastName ?? ''}",
-                                      style: AppStyles.mediumText.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      "@${data.profile.userName}",
-                                      style: AppStyles.mediumText,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: Dimensions.height10),
-                            Text(
-                              data.desc,
-                              style: AppStyles.mediumText,
-                              textAlign: TextAlign.start,
-                            ),
-                            SizedBox(height: Dimensions.height10),
-                            if (data.image != null)
-                              Container(
-                                clipBehavior: Clip.hardEdge,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(Dimensions.radius15),
-                                  ),
-                                ),
-                                child: CachedNetworkImage(
-                                  imageUrl: data.image!,
-                                  placeholder:
-                                      (context, url) => const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                  errorWidget:
-                                      (context, url, error) => Image.asset(
-                                        "assets/images/error_image.jpg",
-                                      ),
-                                  width: double.infinity,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                            SizedBox(height: Dimensions.height10),
-                            GetBuilder<LikeController>(
-                              builder:
-                                  (likeController) => Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () async {
-                                          final clubId =
-                                              allClub?.id ?? club?.id;
-                                          if (clubId != null) {
-                                            await likeController
-                                                .likePost(
-                                                  clubId,
-                                                  data.id,
-                                                  data.isLike ? 0 : 1,
-                                                )
-                                                .then((_) {
-                                                  controller.fetchClubFeed(
-                                                    clubId,
-                                                  );
-                                                });
-                                          }
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              data.isLike
-                                                  ? CupertinoIcons.heart_fill
-                                                  : CupertinoIcons.heart,
-                                              color:
-                                                  data.isLike
-                                                      ? Colors.red
-                                                      : null,
-                                            ),
-                                            SizedBox(width: Dimensions.width5),
-                                            Text("${data.likes ?? 0}"),
-                                          ],
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          Get.bottomSheet(
-                                            ignoreSafeArea: false,
-                                            backgroundColor: Colors.white,
-                                            CommentsScreen(
-                                              comments: data.comments ?? [],
-                                            ),
-                                            isScrollControlled: true,
-                                          );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            const Icon(Icons.comment_outlined),
-                                            SizedBox(width: Dimensions.width5),
-                                            Text('${data.comments.length}'),
-                                          ],
-                                        ),
-                                      ),
-                                      Text(
-                                        controller.timeAgoSince(data.updatedAt),
-                                      ),
-                                    ],
-                                  ),
-                            ),
-                          ],
+            // Actions
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildActionButton(
+                    icon: data.isLike ? Icons.favorite : Icons.favorite_border,
+                    label: '${data.likes}',
+                    color: data.isLike ? Colors.red : Colors.grey[600]!,
+                    onTap: () => _toggleLike(index),
+                  ),
+                  _buildActionButton(
+                    icon: Icons.comment_outlined,
+                    label: '${data.comments.length}',
+                    color: Colors.grey[600]!,
+                    onTap: () => _showCommentsBottomSheet(data),
+                  ),
+                  _buildActionButton(
+                    icon: Icons.share_outlined,
+                    label: 'Share',
+                    color: Colors.grey[600]!,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Post shared!'),
+                          backgroundColor: Colors.deepPurple,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                       );
                     },
                   ),
-                ),
-              ],
-            );
-          },
+                  _buildActionButton(
+                    icon: Icons.bookmark_border,
+                    label: 'Save',
+                    color: Colors.grey[600]!,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );

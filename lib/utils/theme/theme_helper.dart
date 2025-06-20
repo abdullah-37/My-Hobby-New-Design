@@ -49,7 +49,7 @@ class ThemeHelper {
     String color2 = "",
   ]) {
     Color c1 = Theme.of(context).primaryColor;
-    Color c2 = Color.fromARGB(255, 43, 43, 43).withValues(alpha: 0.6);
+    Color c2 = Theme.of(context).colorScheme.secondary;
     if (color1.isEmpty == false) {
       c1 = HexColor(color1);
     }
