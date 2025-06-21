@@ -405,7 +405,10 @@ class _CustomCalendarState extends State<CustomCalendar> {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
-          child: Text('No events for this date', style: AppStyles.body),
+          child: Text(
+            'No events for this date',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
         ),
       );
     }

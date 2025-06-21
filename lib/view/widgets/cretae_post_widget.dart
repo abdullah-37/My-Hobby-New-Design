@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:hobby_club_app/controller/theme_controller.dart';
+import 'package:hobby_club_app/view/widgets/custom_button.dart';
 
 class CreatePostDialog extends StatefulWidget {
   final Function(String description, String? imagePath)? onPostCreated;
@@ -270,6 +273,7 @@ class _CreatePostDialogState extends State<CreatePostDialog>
 
   @override
   Widget build(BuildContext context) {
+    ThemeController themeController = Get.find<ThemeController>();
     return Dialog(
       backgroundColor: Colors.transparent,
       child: AnimatedBuilder(
@@ -285,7 +289,10 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                   maxHeight: MediaQuery.of(context).size.height * 0.8,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color:
+                      themeController.themeMode.value == ThemeMode.dark
+                          ? Theme.of(context).scaffoldBackgroundColor
+                          : Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -367,16 +374,13 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                const Column(
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       'John Doe',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: Colors.black87,
-                                      ),
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
                                     ),
                                     Text(
                                       '@john_doe',
@@ -393,61 +397,37 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                             const SizedBox(height: 20),
 
                             // Text Input
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[50],
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color:
-                                      _focusNode.hasFocus
-                                          ? Colors.deepPurple.withOpacity(0.5)
-                                          : Colors.grey[300]!,
-                                ),
-                              ),
-                              child: TextField(
-                                controller: _textController,
-                                focusNode: _focusNode,
-                                maxLines: 6,
-                                maxLength: _maxCharacters,
-                                decoration: const InputDecoration(
-                                  hintText: "What's on your mind?",
-                                  hintStyle: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 16,
-                                  ),
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.all(16),
-                                  counterText: '',
-                                ),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  height: 1.4,
-                                ),
+                            TextFormField(
+                              controller: _textController,
+                              focusNode: _focusNode,
+                              maxLines: 6,
+                              // maxLength: _maxCharacters,
+                              decoration: InputDecoration(
+                                hintText: 'Whats on your mind',
                               ),
                             ),
 
                             // Character Counter
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const SizedBox(),
-                                  Text(
-                                    '$_characterCount/$_maxCharacters',
-                                    style: TextStyle(
-                                      color:
-                                          _characterCount > _maxCharacters * 0.8
-                                              ? Colors.red
-                                              : Colors.grey,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
+                            // Padding(
+                            //   padding: const EdgeInsets.only(top: 8),
+                            //   child: Row(
+                            //     mainAxisAlignment:
+                            //         MainAxisAlignment.spaceBetween,
+                            //     children: [
+                            //       const SizedBox(),
+                            //       Text(
+                            //         '$_characterCount/$_maxCharacters',
+                            //         style: TextStyle(
+                            //           color:
+                            //               _characterCount > _maxCharacters * 0.8
+                            //                   ? Colors.red
+                            //                   : Colors.grey,
+                            //           fontSize: 12,
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
                             const SizedBox(height: 20),
 
                             // Selected Image
@@ -493,13 +473,20 @@ class _CreatePostDialogState extends State<CreatePostDialog>
 
                             // Action Buttons
                             Container(
-                              padding: const EdgeInsets.all(16),
+                              // padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.grey[50],
+                                color:
+                                    themeController.themeMode.value ==
+                                            ThemeMode.dark
+                                        ? Theme.of(
+                                          context,
+                                        ).scaffoldBackgroundColor
+                                        : Colors.white,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey[200]!),
+                                // border: Border.all(color: Colors.grey[200]!),
                               ),
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   _buildActionIcon(
                                     icon: Icons.photo_camera,
@@ -508,33 +495,13 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                                   ),
                                   const SizedBox(width: 20),
                                   _buildActionIcon(
-                                    icon: Icons.gif_box,
-                                    label: 'GIF',
+                                    icon: Icons.video_camera_back_outlined,
+                                    label: 'Video',
                                     onTap: () {
                                       HapticFeedback.lightImpact();
-                                      _showErrorSnackBar(
-                                        'GIF feature coming soon!',
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(width: 20),
-                                  _buildActionIcon(
-                                    icon: Icons.poll,
-                                    label: 'Poll',
-                                    onTap: () {
-                                      HapticFeedback.lightImpact();
-                                      _showErrorSnackBar(
-                                        'Poll feature coming soon!',
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(width: 20),
-                                  _buildActionIcon(
-                                    icon: Icons.emoji_emotions,
-                                    label: 'Emoji',
-                                    onTap: () {
-                                      HapticFeedback.lightImpact();
-                                      // Add emoji picker functionality
+                                      // _showErrorSnackBar(
+                                      //   'GIF feature coming soon!',
+                                      // );
                                     },
                                   ),
                                 ],
@@ -546,138 +513,68 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                     ),
 
                     // Bottom Actions
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: const BorderRadius.vertical(
-                          bottom: Radius.circular(20),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Privacy Selector
-                          // Container(
-                          //   padding: const EdgeInsets.symmetric(
-                          //     horizontal: 12,
-                          //     vertical: 8,
-                          //   ),
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.white,
-                          //     borderRadius: BorderRadius.circular(20),
-                          //     border: Border.all(color: Colors.grey[300]!),
-                          //   ),
-                          //   child: const Row(
-                          //     mainAxisSize: MainAxisSize.min,
-                          //     children: [
-                          //       Icon(
-                          //         Icons.public,
-                          //         size: 16,
-                          //         color: Colors.deepPurple,
-                          //       ),
-                          //       SizedBox(width: 4),
-                          //       Text(
-                          //         'Public',
-                          //         style: TextStyle(
-                          //           fontSize: 12,
-                          //           color: Colors.deepPurple,
-                          //           fontWeight: FontWeight.w500,
-                          //         ),
-                          //       ),
-                          //       Icon(
-                          //         Icons.arrow_drop_down,
-                          //         size: 16,
-                          //         color: Colors.deepPurple,
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
+                    // Container(
+                    //   padding: const EdgeInsets.all(20),
+                    //   decoration: BoxDecoration(
+                    //     color:
+                    //         themeController.themeMode.value == ThemeMode.dark
+                    //             ? Theme.of(context).scaffoldBackgroundColor
+                    //             : Colors.white,
+                    //     borderRadius: const BorderRadius.vertical(
+                    //       bottom: Radius.circular(20),
+                    //     ),
+                    //   ),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.center,
+                    //     children: [
+                    //       // Privacy Selector
+                    //       // Container(
+                    //       //   padding: const EdgeInsets.symmetric(
+                    //       //     horizontal: 12,
+                    //       //     vertical: 8,
+                    //       //   ),
+                    //       //   decoration: BoxDecoration(
+                    //       //     color: Colors.white,
+                    //       //     borderRadius: BorderRadius.circular(20),
+                    //       //     border: Border.all(color: Colors.grey[300]!),
+                    //       //   ),
+                    //       //   child: const Row(
+                    //       //     mainAxisSize: MainAxisSize.min,
+                    //       //     children: [
+                    //       //       Icon(
+                    //       //         Icons.public,
+                    //       //         size: 16,
+                    //       //         color: Colors.deepPurple,
+                    //       //       ),
+                    //       //       SizedBox(width: 4),
+                    //       //       Text(
+                    //       //         'Public',
+                    //       //         style: TextStyle(
+                    //       //           fontSize: 12,
+                    //       //           color: Colors.deepPurple,
+                    //       //           fontWeight: FontWeight.w500,
+                    //       //         ),
+                    //       //       ),
+                    //       //       Icon(
+                    //       //         Icons.arrow_drop_down,
+                    //       //         size: 16,
+                    //       //         color: Colors.deepPurple,
+                    //       //       ),
+                    //       //     ],
+                    //       //   ),
+                    //       // ),
 
-                          // const Spacer(),
+                    //       // const Spacer(),
 
-                          // Post Button
-                          AnimatedBuilder(
-                            animation: _buttonAnimationController,
-                            builder: (context, child) {
-                              return Transform.scale(
-                                scale: _buttonScaleAnimation.value,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors:
-                                          _textController.text.trim().isEmpty
-                                              ? [
-                                                Colors.grey[300]!,
-                                                Colors.grey[400]!,
-                                              ]
-                                              : [
-                                                Theme.of(context).primaryColor,
-                                                Theme.of(
-                                                  context,
-                                                ).colorScheme.secondary,
-                                              ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(25),
-                                    // boxShadow:
-                                    //     _textController.text.trim().isNotEmpty
-                                    //         ? [
-                                    //           BoxShadow(
-                                    //             color: Colors.deepPurple
-                                    //                 .withOpacity(0.3),
-                                    //             spreadRadius: 1,
-                                    //             blurRadius: 8,
-                                    //             offset: const Offset(0, 2),
-                                    //           ),
-                                    //         ]
-                                    //         : [],
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed:
-                                        _textController.text.trim().isEmpty ||
-                                                _isPosting
-                                            ? null
-                                            : _createPost,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 24,
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                    ),
-                                    child:
-                                        _isPosting
-                                            ? const SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                      Color
-                                                    >(Colors.white),
-                                              ),
-                                            )
-                                            : const Text(
-                                              'Post',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                    // Post Button
+                    //     ],
+                    //   ),
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: CustomElevatedButton(onTap: () {}, title: 'Post'),
                     ),
+                    SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -701,13 +598,13 @@ class _CreatePostDialogState extends State<CreatePostDialog>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Colors.deepPurple, size: 24),
+            Icon(icon, color: Colors.grey, size: 24),
             const SizedBox(height: 4),
             Text(
               label,
               style: const TextStyle(
                 fontSize: 12,
-                color: Colors.deepPurple,
+                color: Colors.grey,
                 fontWeight: FontWeight.w500,
               ),
             ),

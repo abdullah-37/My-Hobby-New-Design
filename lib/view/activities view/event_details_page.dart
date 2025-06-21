@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
+import 'package:hobby_club_app/view/widgets/custom_button.dart';
 
 class EventDetailsPage extends StatelessWidget {
   const EventDetailsPage({super.key});
@@ -55,12 +56,12 @@ class EventDetailsPage extends StatelessWidget {
                     ),
 
                     // Details Section
-                    Text(
-                      textAlign: TextAlign.center,
+                    // Text(
+                    //   textAlign: TextAlign.center,
 
-                      'Details',
-                      style: Theme.of(context).textTheme.displayLarge,
-                    ),
+                    //   'Details',
+                    //   style: Theme.of(context).textTheme.displayLarge,
+                    // ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -86,38 +87,37 @@ class EventDetailsPage extends StatelessWidget {
                     ),
 
                     // About the Event
-                    Text(
-                      textAlign: TextAlign.center,
+                    // Text(
+                    //   textAlign: TextAlign.center,
 
-                      'About the Event',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: primaryTextColor,
-                        letterSpacing: -0.015,
-                      ),
-                    ),
+                    //   'About the Event',
+                    //   style: TextStyle(
+                    //     fontSize: 18,
+                    //     fontWeight: FontWeight.bold,
+                    //     color: primaryTextColor,
+                    //     letterSpacing: -0.015,
+                    //   ),
+                    // ),
                     Text(
                       textAlign: TextAlign.center,
 
                       'This event is perfect for outdoor enthusiasts and those looking to connect with nature. We\'ll provide guidance and support throughout the hike, ensuring a safe and enjoyable experience for all participants.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: primaryTextColor,
-                        height: 1.5,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
+                    SizedBox(height: 10),
 
                     // Organizer
-                    Text(
-                      'Organizer',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: primaryTextColor,
-                        letterSpacing: -0.015,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Organizer',
+                        style: Theme.of(context).textTheme.displayLarge!,
                       ),
                     ),
+                    SizedBox(height: 10),
+
                     Row(
                       children: [
                         Container(
@@ -139,11 +139,7 @@ class EventDetailsPage extends StatelessWidget {
                           children: [
                             Text(
                               'Ethan Walker',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: primaryTextColor,
-                              ),
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             Text(
                               'Trailblazers Club',
@@ -198,48 +194,20 @@ class EventDetailsPage extends StatelessWidget {
                     // Instructions
                     Text(
                       'Instructions',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: primaryTextColor,
-                        letterSpacing: -0.015,
-                      ),
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     Text(
                       textAlign: TextAlign.center,
 
                       'Please bring your own water bottle, snacks, and wear appropriate hiking shoes. Meet at the trailhead parking lot 15 minutes before the start time.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: primaryTextColor,
-                        height: 1.5,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
 
-                    // Join Event Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0B80EE),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                        ),
-                        onPressed: () {
-                          // Handle join event action
-                        },
-                        child: const Text(
-                          'Join Event',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Join Event Buttond
+                    CustomElevatedButton(onTap: () {}, title: 'Join Event'),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -259,7 +227,9 @@ class EventDetailsPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: borderColor, width: 1)),
+        border: Border(
+          top: BorderSide(color: Colors.grey.withValues(alpha: 0.3), width: 1),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -268,11 +238,14 @@ class EventDetailsPage extends StatelessWidget {
             width: MediaQuery.of(Get.context!).size.width * 0.2,
             child: Text(
               label,
-              style: TextStyle(fontSize: 14, color: const Color(0xFF60768a)),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
           ),
           Expanded(
-            child: Text(value, style: Theme.of(context).textTheme.bodySmall),
+            child: Text(value, style: Theme.of(context).textTheme.bodyLarge),
           ),
         ],
       ),
