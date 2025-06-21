@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 
 class PointsPage extends StatelessWidget {
   const PointsPage({super.key});
@@ -7,88 +8,46 @@ class PointsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0).copyWith(bottom: 8),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () => Get.back(),
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 24,
-                        color: Color(0xFF0E171B),
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 48),
-                        child: Text(
-                          'Points',
-                          style: TextStyle(
-                            color: Color(0xFF0E171B),
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.015,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+      appBar: CustomAppBar(title: 'Points',centerTitle: true,isLeading: true,),
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'How to earn points',
+                style: Theme.of(context).textTheme.displayLarge,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'How to earn points',
-                  style: TextStyle(
-                    color: Color(0xFF0E171B),
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.015,
-                  ),
+          ),
+          Expanded(
+            child: ListView(
+              children: const [
+                PointsItem(
+                  icon: Icons.calendar_today,
+                  title: 'Attend events',
+                  subtitle: 'Earn 10 points',
                 ),
-              ),
+                PointsItem(
+                  icon: Icons.image,
+                  title: 'Post in the feed',
+                  subtitle: 'Earn 5 points',
+                ),
+                PointsItem(
+                  icon: Icons.emoji_events,
+                  title: 'Complete challenges',
+                  subtitle: 'Earn 20 points',
+                ),
+                PointsItem(
+                  icon: Icons.people,
+                  title: 'Invite colleagues',
+                  subtitle: 'Earn 15 points',
+                ),
+              ],
             ),
-            Expanded(
-              child: ListView(
-                children: const [
-                  PointsItem(
-                    icon: Icons.calendar_today,
-                    title: 'Attend events',
-                    subtitle: 'Earn 10 points',
-                  ),
-                  PointsItem(
-                    icon: Icons.image,
-                    title: 'Post in the feed',
-                    subtitle: 'Earn 5 points',
-                  ),
-                  PointsItem(
-                    icon: Icons.emoji_events,
-                    title: 'Complete challenges',
-                    subtitle: 'Earn 20 points',
-                  ),
-                  PointsItem(
-                    icon: Icons.people,
-                    title: 'Invite colleagues',
-                    subtitle: 'Earn 15 points',
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -109,7 +68,6 @@ class PointsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFFF8FAFC),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       height: 72,
       child: Row(
@@ -131,11 +89,7 @@ class PointsItem extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: Color(0xFF0E171B),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(context).textTheme.bodyLarge,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 
 class RewardsScreen extends StatelessWidget {
   const RewardsScreen({super.key});
@@ -31,148 +32,105 @@ class RewardsScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0).copyWith(bottom: 8),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Get.close(1);
-                    },
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 24,
-                        color: Color(0xFF0E171B),
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 48),
-                        child: Text(
-                          'Rewards',
-                          style: TextStyle(
-                            color: Color(0xFF0E171B),
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.015,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+      appBar: CustomAppBar(title: 'Rewards',centerTitle: true,isLeading: true,),
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Available Rewards',
+                style: Theme.of(context).textTheme.displayLarge,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Available Rewards',
-                  style: TextStyle(
-                    color: Color(0xFF0E171B),
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.015,
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ListView.builder(
-                itemCount: rewards.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final reward = rewards[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                reward['title']!,
-                                style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ListView.builder(
+              itemCount: rewards.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final reward = rewards[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              reward['title']!,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              reward['description']!,
+                              style: const TextStyle(
+                                color: Color(0xFF5C748A),
+                                fontSize: 14,
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                reward['description']!,
-                                style: const TextStyle(
-                                  color: Color(0xFF5C748A),
-                                  fontSize: 14,
-                                ),
+                            ),
+                            SizedBox(height: 10),
+                            Container(
+                              width: 150,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE7EFF3),
+                                borderRadius: BorderRadius.circular(16),
                               ),
-                              SizedBox(height: 10),
-                              Container(
-                                width: 150,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE7EFF3),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '${reward['points']!} points',
-                                    style: const TextStyle(
-                                      color: Color(0xFF0E171B),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${reward['points']!} points',
+                                  style: const TextStyle(
+                                    color: Color(0xFF0E171B),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          flex: 1,
-                          child: AspectRatio(
-                            aspectRatio: 10 / 9,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.network(
-                                reward['image']!,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Colors.grey[800],
-                                    child: const Icon(
-                                      Icons.broken_image,
-                                      color: Colors.white,
-                                    ),
-                                  );
-                                },
-                              ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        flex: 1,
+                        child: AspectRatio(
+                          aspectRatio: 10 / 9,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              reward['image']!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: Colors.grey[800],
+                                  child: const Icon(
+                                    Icons.broken_image,
+                                    color: Colors.white,
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
