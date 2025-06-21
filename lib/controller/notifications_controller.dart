@@ -21,7 +21,11 @@ class NotificationsController extends GetxController {
     await OneSignal.login(userId);
 
     final oneSignalId = await OneSignal.User.getOnesignalId();
+    final oneSignalExternalId = await OneSignal.User.getExternalId();
+
     print("🔔 OneSignal userId: $oneSignalId");
+    print("🔔 OneSignal oneSignalExternalId: $oneSignalExternalId");
+
     isSubscribed.value = OneSignal.User.pushSubscription.optedIn!;
   }
 

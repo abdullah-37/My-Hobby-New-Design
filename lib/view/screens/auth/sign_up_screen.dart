@@ -205,10 +205,13 @@
 //   }
 // }
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:hobby_club_app/utils/theme/theme_helper.dart';
+import 'package:hobby_club_app/view/screens/auth/login_screen.dart';
+import 'package:hobby_club_app/view/widgets/custom_button.dart';
 import 'package:hobby_club_app/view/widgets/header_widget.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -406,40 +409,7 @@ class _RegistrationPageState extends State<SignUpScreen> {
                         //   },
                         // ),
                         SizedBox(height: 20.0),
-                        Container(
-                          decoration: ThemeHelper().buttonBoxDecoration(
-                            context,
-                          ),
-                          child: ElevatedButton(
-                            style: ThemeHelper().buttonStyle(),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                40,
-                                10,
-                                40,
-                                10,
-                              ),
-                              child: Text(
-                                "Register".toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                // Navigator.of(context).pushAndRemoveUntil(
-                                //   MaterialPageRoute(
-                                //     builder: (context) => ProfilePage(),
-                                //   ),
-                                //   (Route<dynamic> route) => false,
-                                // );
-                              }
-                            },
-                          ),
-                        ),
+                        CustomElevatedButton(onTap: () {}, title: 'Register'),
                         SizedBox(height: 30.0),
                         Text(
                           "Or create account using social media",
@@ -542,6 +512,34 @@ class _RegistrationPageState extends State<SignUpScreen> {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                    //child: Text('Don\'t have an account? Create'),
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: "Already have an account? "),
+                          TextSpan(
+                            text: 'Sign In',
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => LoginScreen(),
+                                      ),
+                                    );
+                                  },
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
