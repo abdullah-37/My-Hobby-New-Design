@@ -14,6 +14,7 @@ class CustomElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: ThemeHelper().buttonBoxDecoration(context),
+      width: double.infinity,
       child: ElevatedButton(
         style: ThemeHelper().buttonStyle(),
         onPressed: onTap,

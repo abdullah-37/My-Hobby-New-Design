@@ -19,7 +19,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     double headerHeight = 300;
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -42,30 +41,21 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         children: [
                           Text(
                             'Forgot Password?',
-                            style: TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black54,
-                            ),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.displayLarge!.copyWith(fontSize: 40),
                             // textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 10),
                           Text(
                             'Enter the email address associated with your account.',
-                            style: TextStyle(
-                              // fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black54,
-                            ),
+                            style: TextStyle(color: Colors.grey),
                             // textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 10),
                           Text(
                             'We will email you a verification code to check your authenticity.',
-                            style: TextStyle(
-                              color: Colors.black38,
-                              // fontSize: 20,
-                            ),
+                            style: TextStyle(color: Colors.grey),
                             // textAlign: TextAlign.center,
                           ),
                         ],
@@ -130,26 +120,36 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             ),
                           ),
                           SizedBox(height: 30.0),
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(text: "Remember your password? "),
-                                TextSpan(
-                                  text: 'Login',
-                                  recognizer:
-                                      TapGestureRecognizer()
-                                        ..onTap = () {
-                                          Navigator.push(
+                          Container(
+                            margin: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                            //child: Text('Don\'t have an account? Create'),
+                            child: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(text: "Remember your password? "),
+                                  TextSpan(
+                                    text: 'Log In',
+                                    recognizer:
+                                        TapGestureRecognizer()
+                                          ..onTap = () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (context) => LoginScreen(),
+                                              ),
+                                            );
+                                          },
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          Theme.of(
                                             context,
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (context) => LoginScreen(),
-                                            ),
-                                          );
-                                        },
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
+                                          ).colorScheme.secondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

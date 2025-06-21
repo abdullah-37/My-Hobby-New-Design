@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:hobby_club_app/controller/theme_controller.dart';
 import 'package:hobby_club_app/models/club/club_feed_model.dart';
 import 'package:hobby_club_app/view/widgets/cretae_post_widget.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
@@ -177,157 +179,159 @@ class _ClubFeedsScreenState extends State<JoinedClubDetailScreen>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      // backgroundColor: Colors.white,
       builder: (context) => _buildCommentsBottomSheet(data),
     );
   }
 
   Widget _buildCommentsBottomSheet(Data data) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
+    ThemeController themeController = Get.find<ThemeController>();
+    return Obx(
+      () => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        decoration: BoxDecoration(
+          color:
+              themeController.themeMode.value == ThemeMode.dark
+                  ? Theme.of(context).scaffoldBackgroundColor
+                  : Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color:
+                    themeController.themeMode.value == ThemeMode.dark
+                        ? Theme.of(context).scaffoldBackgroundColor
+                        : Colors.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.comment_outlined, color: Colors.deepPurple),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Comments (${data.comments.length})',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              children: [
-                const Icon(Icons.comment_outlined, color: Colors.deepPurple),
-                const SizedBox(width: 8),
-                Text(
-                  'Comments (${data.comments.length})',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: data.comments.length,
-              itemBuilder: (context, index) {
-                final comment = data.comments[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundImage: NetworkImage(comment.profile.img),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                comment.profile.userName,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepPurple,
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: data.comments.length,
+                itemBuilder: (context, index) {
+                  final comment = data.comments[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundImage: NetworkImage(comment.profile.img),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Theme.of(
+                                context,
+                              ).primaryColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  comment.profile.userName,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(comment.comment),
-                              const SizedBox(height: 4),
-                              Text(
-                                _formatTimeAgo(comment.updatedAt),
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
+                                const SizedBox(height: 4),
+                                Text(comment.comment),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _formatTimeAgo(comment.updatedAt),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 18,
-                  backgroundImage: NetworkImage(
-                    "https://picsum.photos/150/150?random=currentuser",
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color:
+                    themeController.themeMode.value == ThemeMode.dark
+                        ? Theme.of(context).scaffoldBackgroundColor
+                        : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color:
+                        themeController.themeMode.value == ThemeMode.dark
+                            ? Colors.transparent
+                            : Colors.grey.withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: const Offset(0, -2),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Add a comment...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[100],
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 18,
+                    backgroundImage: NetworkImage(
+                      "https://picsum.photos/150/150?random=currentuser",
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.deepPurple, Colors.purple],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(hintText: 'Add a comment...'),
                     ),
-                    shape: BoxShape.circle,
                   ),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.send, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.deepPurple, Colors.purple],
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.send, color: Colors.white),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -410,156 +414,158 @@ class _ClubFeedsScreenState extends State<JoinedClubDetailScreen>
   }
 
   Widget _buildFeedCard(Data data, int index) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.deepPurple.withOpacity(0.3),
-                        width: 2,
+    ThemeController themeController = Get.find<ThemeController>();
+    return Obx(
+      () => Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color:
+              themeController.themeMode.value == ThemeMode.dark
+                  ? Theme.of(context).primaryColor.withValues(alpha: 0.2)
+                  : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color:
+                  themeController.themeMode.value == ThemeMode.dark
+                      ? Colors.transparent
+                      : Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Theme.of(context).primaryColor,
+                          width: 2,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 22,
+                        backgroundImage: NetworkImage(data.profile.img),
                       ),
                     ),
-                    child: CircleAvatar(
-                      radius: 22,
-                      backgroundImage: NetworkImage(data.profile.img),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${data.profile.firstName} ${data.profile.lastName}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.black87,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${data.profile.firstName} ${data.profile.lastName}',
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
-                        ),
-                        Text(
-                          '@${data.profile.userName}',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
+                          Text(
+                            '@${data.profile.userName}',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Text(
-                    _formatTimeAgo(data.updatedAt),
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.more_vert, color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-            ),
-
-            // Content
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                data.desc,
-                style: const TextStyle(
-                  fontSize: 15,
-                  height: 1.4,
-                  color: Colors.black87,
+                    Text(
+                      _formatTimeAgo(data.updatedAt),
+                      style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.more_vert, color: Colors.grey[600]),
+                    ),
+                  ],
                 ),
               ),
-            ),
 
-            // Image (if exists)
-            if (data.image != null) ...[
-              const SizedBox(height: 12),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                height: 200,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: NetworkImage(data.image!),
-                    fit: BoxFit.cover,
+              // Content
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  data.desc,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+
+              // Image (if exists)
+              if (data.image != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    image: DecorationImage(
+                      image: NetworkImage(data.image!),
+                      fit: BoxFit.cover,
+                    ),
                   ),
+                ),
+              ],
+
+              // Actions
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildActionButton(
+                      icon:
+                          data.isLike ? Icons.favorite : Icons.favorite_border,
+                      label: '${data.likes}',
+                      color: data.isLike ? Colors.red : Colors.grey[600]!,
+                      onTap: () => _toggleLike(index),
+                    ),
+                    _buildActionButton(
+                      icon: Icons.comment_outlined,
+                      label: '${data.comments.length}',
+                      color: Colors.grey[600]!,
+                      onTap: () => _showCommentsBottomSheet(data),
+                    ),
+                    _buildActionButton(
+                      icon: Icons.share_outlined,
+                      label: 'Share',
+                      color: Colors.grey[600]!,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Post shared!'),
+                            backgroundColor: Colors.deepPurple,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildActionButton(
+                      icon: Icons.bookmark_border,
+                      label: 'Save',
+                      color: Colors.grey[600]!,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
-
-            // Actions
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildActionButton(
-                    icon: data.isLike ? Icons.favorite : Icons.favorite_border,
-                    label: '${data.likes}',
-                    color: data.isLike ? Colors.red : Colors.grey[600]!,
-                    onTap: () => _toggleLike(index),
-                  ),
-                  _buildActionButton(
-                    icon: Icons.comment_outlined,
-                    label: '${data.comments.length}',
-                    color: Colors.grey[600]!,
-                    onTap: () => _showCommentsBottomSheet(data),
-                  ),
-                  _buildActionButton(
-                    icon: Icons.share_outlined,
-                    label: 'Share',
-                    color: Colors.grey[600]!,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('Post shared!'),
-                          backgroundColor: Colors.deepPurple,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildActionButton(
-                    icon: Icons.bookmark_border,
-                    label: 'Save',
-                    color: Colors.grey[600]!,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -579,16 +585,13 @@ class _ClubFeedsScreenState extends State<JoinedClubDetailScreen>
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color, size: 20),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
+            Icon(
+              icon,
+              color: Theme.of(context).colorScheme.secondary,
+              size: 20,
             ),
+            const SizedBox(width: 4),
+            Text(label, style: Theme.of(context).textTheme.labelLarge),
           ],
         ),
       ),
