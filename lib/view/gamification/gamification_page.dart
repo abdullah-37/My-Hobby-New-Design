@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/theme_controller.dart';
+import 'package:hobby_club_app/controller/raw/theme_controller.dart';
 import 'package:hobby_club_app/view/gamification/badges_page.dart';
 import 'package:hobby_club_app/view/gamification/leaderboard_page.dart';
 import 'package:hobby_club_app/view/gamification/points_page.dart';

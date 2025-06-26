@@ -92,7 +92,8 @@ class EventsScreen extends StatelessWidget {
           itemCount: events.length,
           itemBuilder: (context, index) {
             final event = events[index];
-            return EventWidget(event: event);
+            return SizedBox();
+            // return EventWidget(event: event);
           },
         ),
       ),

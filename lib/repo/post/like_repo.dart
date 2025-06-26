@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:hobby_club_app/models/create_club_model.dart';
-import 'package:hobby_club_app/models/response_model.dart';
+import 'package:hobby_club_app/models/raw/create_club_model.dart';
+import 'package:hobby_club_app/models/raw/response_model.dart';
 import 'package:hobby_club_app/services/api_services.dart';
 import 'package:hobby_club_app/utils/api_url.dart';
 

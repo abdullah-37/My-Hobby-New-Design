@@ -54,6 +54,12 @@ final ThemeData darkTheme = ThemeData(
       fontWeight: FontWeight.bold,
       color: Colors.grey,
     ),
+    bodySmall: TextStyle(
+      // Body Subtitle
+      fontSize: 12,
+      fontWeight: FontWeight.w500,
+      color: Colors.white,
+    ),
     labelLarge: TextStyle(
       // Button Text / Callouts
       fontSize: 14,

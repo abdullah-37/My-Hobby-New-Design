@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:hobby_club_app/controller/hide_floating_button_controller.dart';
-import 'package:hobby_club_app/controller/localization_controller.dart';
-import 'package:hobby_club_app/controller/notifications_controller.dart';
-import 'package:hobby_club_app/controller/theme_controller.dart';
+import 'package:hobby_club_app/controller/raw/hide_floating_button_controller.dart';
+import 'package:hobby_club_app/controller/raw/localization_controller.dart';
+import 'package:hobby_club_app/controller/raw/notifications_controller.dart';
+import 'package:hobby_club_app/controller/raw/theme_controller.dart';
 import 'package:hobby_club_app/firebase_options.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/app_translations.dart';
 import 'package:hobby_club_app/utils/theme/darktheme/dark_theme.dart';
 import 'package:hobby_club_app/utils/theme/lighttheme/light_theme.dart';
-import 'package:hobby_club_app/view/screens/auth/login_screen.dart';
+import 'package:hobby_club_app/view/screens/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -123,7 +123,7 @@ class _MyAppState extends State<MyApp> {
           );
         },
 
-        home: const LoginScreen(),
+        home: const SplashScreen(),
       );
     });
   }

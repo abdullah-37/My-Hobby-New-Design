@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:hobby_club_app/models/response_model.dart';
+import 'package:hobby_club_app/models/raw/response_model.dart';
 import 'package:hobby_club_app/view/screens/no_internet_screen.dart';
 import 'package:http/http.dart' as http;
 

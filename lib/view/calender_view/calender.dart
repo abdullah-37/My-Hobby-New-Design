@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/theme_controller.dart';
+import 'package:hobby_club_app/controller/raw/theme_controller.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/utils/style.dart';
@@ -417,17 +417,18 @@ class _CustomCalendarState extends State<CustomCalendar> {
       itemCount: events.length,
       itemBuilder: (context, index) {
         final event = events[index];
-        return EventWidget(
-          event: {
-            'date': 'Sun, Jul 14 · 2:00 PM',
-            'title': 'Hiking Adventure',
-            'location': 'Mountain Trail',
-            'Participants': '700',
-            'isParticipated': 'true',
-            'image':
-                'https://lh3.googleusercontent.com/aida-public/AB6AXuBarfFUfhbafijkJD1Zc3fOkIFs_MIzSnXIbh-SyTSd3g33mGxAQ5RhurAIs68pshLCPiKI7Tx1IMKTtdGLIH121CzmRENPceh1OFcynaBDfnoqHFZ8F-gWILKJKk3DwZokICvVOjfA9sNxK8CjAyYo4kItWfcyZFxgD6E2V3zHvvQKZCWt3x1drFr5I0eT5VghQ9-ybxCfJRJYJaQ5um_cIVueJ06WQ99e_zyIikltNxbmqZ7ij97mVZmRtI2cyY8SaWwxtyaBaWEJ',
-          },
-        );
+        return SizedBox();
+        // return EventWidget(
+        //   event: {
+        //     'date': 'Sun, Jul 14 · 2:00 PM',
+        //     'title': 'Hiking Adventure',
+        //     'location': 'Mountain Trail',
+        //     'Participants': '700',
+        //     'isParticipated': 'true',
+        //     'image':
+        //         'https://lh3.googleusercontent.com/aida-public/AB6AXuBarfFUfhbafijkJD1Zc3fOkIFs_MIzSnXIbh-SyTSd3g33mGxAQ5RhurAIs68pshLCPiKI7Tx1IMKTtdGLIH121CzmRENPceh1OFcynaBDfnoqHFZ8F-gWILKJKk3DwZokICvVOjfA9sNxK8CjAyYo4kItWfcyZFxgD6E2V3zHvvQKZCWt3x1drFr5I0eT5VghQ9-ybxCfJRJYJaQ5um_cIVueJ06WQ99e_zyIikltNxbmqZ7ij97mVZmRtI2cyY8SaWwxtyaBaWEJ',
+        //   },
+        // );
       },
     );
   }

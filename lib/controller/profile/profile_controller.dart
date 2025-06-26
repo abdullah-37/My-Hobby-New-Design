@@ -1,12 +1,11 @@
 import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:hobby_club_app/models/auth/profile_model.dart';
-import 'package:hobby_club_app/models/club/club_model.dart';
-import 'package:hobby_club_app/models/response_model.dart';
-import 'package:hobby_club_app/repo/club/my_clubs_repo.dart';
-import 'package:hobby_club_app/view/screens/auth/login_screen.dart';
+
+import '../../models/auth/profile_model.dart';
+import '../../models/club/club_model.dart';
+import '../../models/raw/response_model.dart';
+import '../../repo/club/my_clubs_repo.dart';
 
 class ProfileController extends GetxController {
   bool isLoading = false;

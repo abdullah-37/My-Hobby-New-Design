@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/discussions/discussions_controller.dart';
-import 'package:hobby_club_app/models/discussion_model.dart';
+// import 'package:hobby_club_app/controller/discussions/discussions_controller.dart';
+import 'package:hobby_club_app/models/raw/discussion_model.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/app_strings.dart';
 import 'package:hobby_club_app/utils/constants.dart';
@@ -15,9 +15,9 @@ class DiscussionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DiscussionsController discussionsController = Get.put(
-      DiscussionsController(),
-    );
+    // DiscussionsController discussionsController = Get.put(
+    //   DiscussionsController(),
+    // );
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -44,49 +44,49 @@ class DiscussionScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  discussionsController.isLoading.value
-                      ?  Expanded(
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      )
-                      : discussionsController.discussions.isEmpty
-                      ? Expanded(child: const Text('No Discussions available'))
-                      : Expanded(
-                        child: ListView.builder(
-                          itemCount: discussionsController.discussions.length,
-                          itemBuilder: (context, index) {
-                            Discussions discussions =
-                                discussionsController.discussions[index];
-                            String formatedTime = discussionsController
-                                .timeAgoSince(discussions.createdAt.toString());
-                            return GestureDetector(
-                              onTap: () {
-                                Get.to(
-                                  () => const DisussionDetailScreen(),
-                                  arguments: {
-                                    "clubId": 8,
-                                    "discussionId": discussions.id,
-                                  },
-                                )!.then((result) {
-                                  if (result == true) {
-                                    discussionsController.getClubDiscussions(
-                                      discussionsController.id,
-                                    );
-                                  }
-                                });
-                              },
-                              child: DiscussionWidget(
-                                title: discussions.title,
-                                date: formatedTime,
-                                replies: discussions.repliesCount,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                  // discussionsController.isLoading.value
+                  //     ?  Expanded(
+                  //       child: Center(
+                  //         child: CircularProgressIndicator(
+                  //           color: AppColors.primary,
+                  //         ),
+                  //       ),
+                  //     )
+                  //     : discussionsController.discussions.isEmpty
+                  //     ? Expanded(child: const Text('No Discussions available'))
+                  //     : Expanded(
+                  //       child: ListView.builder(
+                  //         itemCount: discussionsController.discussions.length,
+                  //         itemBuilder: (context, index) {
+                  //           Discussions discussions =
+                  //               discussionsController.discussions[index];
+                  //           String formatedTime = discussionsController
+                  //               .timeAgoSince(discussions.createdAt.toString());
+                  //           return GestureDetector(
+                  //             onTap: () {
+                  //               Get.to(
+                  //                 () => const DisussionDetailScreen(),
+                  //                 arguments: {
+                  //                   "clubId": 8,
+                  //                   "discussionId": discussions.id,
+                  //                 },
+                  //               )!.then((result) {
+                  //                 if (result == true) {
+                  //                   discussionsController.getClubDiscussions(
+                  //                     discussionsController.id,
+                  //                   );
+                  //                 }
+                  //               });
+                  //             },
+                  //             child: DiscussionWidget(
+                  //               title: discussions.title,
+                  //               date: formatedTime,
+                  //               replies: discussions.repliesCount,
+                  //             ),
+                  //           );
+                  //         },
+                  //       ),
+                  //     ),
                 ],
               ),
             ),
@@ -108,7 +108,7 @@ class DiscussionScreen extends StatelessWidget {
                         formKey: formKey,
                         titleController: titleController,
                         descriptionController: descriptionController,
-                        discussionsController: discussionsController,
+                        // discussionsController: discussionsController,
                       );
                     },
                   );

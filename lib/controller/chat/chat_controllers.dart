@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/models/message_model.dart';
+import 'package:hobby_club_app/models/raw/message_model.dart';
 import 'package:hobby_club_app/utils/app_images.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -47,7 +47,7 @@ class ChatControllers extends GetxController {
         ChatMessage(
           isSent: false,
           message:
-              "Nice! Are you using GetX or Riverpod in your current project?",
+          "Nice! Are you using GetX or Riverpod in your current project?",
           time: "12:08 PM",
           userName: "Abdullah",
           type: 'text',
@@ -84,7 +84,7 @@ class ChatControllers extends GetxController {
         ChatMessage(
           isSent: true,
           message:
-              "`flutter_animate` is my go-to. And Lottie for complex ones.",
+          "`flutter_animate` is my go-to. And Lottie for complex ones.",
           time: "12:13 PM",
           userName: "UserName",
           type: 'text',
@@ -107,7 +107,7 @@ class ChatControllers extends GetxController {
         ChatMessage(
           isSent: false,
           message:
-              "Absolutely! Especially with custom painters and shaders now.",
+          "Absolutely! Especially with custom painters and shaders now.",
           time: "12:15 PM",
           userName: "Abdullah",
           type: 'text',

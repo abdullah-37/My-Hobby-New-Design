@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hobby_club_app/controller/auth/profile_complete_controller.dart';
@@ -5,8 +7,11 @@ import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/app_strings.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/utils/style.dart';
+import 'package:hobby_club_app/utils/theme/theme_helper.dart';
 import 'package:hobby_club_app/view/widgets/custom_button.dart';
-import 'package:hobby_club_app/view/widgets/custom_text_form_field.dart';
+import 'package:hobby_club_app/view/widgets/header_widget.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ProfileCompleteScreen extends StatefulWidget {
   const ProfileCompleteScreen({super.key});
@@ -16,236 +21,289 @@ class ProfileCompleteScreen extends StatefulWidget {
 }
 
 class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
-  TextEditingValue formatEditUpdate(TextEditingValue value) {
-    var text = value.text.replaceAll(RegExp(r'[^0-9]'), '');
-
-    final buffer = StringBuffer();
-    for (int i = 0; i < text.length && i < 8; i++) {
-      buffer.write(text[i]);
-      if ((i == 3 || i == 5) && i != text.length - 1) {
-        buffer.write('/');
-      }
-    }
-
-    final formatted = buffer.toString();
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
-    );
-  }
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     Get.put(ProfileCompleteController());
-
-    // TODO: implement initState
     super.initState();
+  }
+
+  Future<void> _pickImage() async {
+    final status = await Permission.storage.request();
+
+    if (status.isGranted) {
+      try {
+        final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+        if (image != null) {
+          Get.find<ProfileCompleteController>().setProfileImage(image.path);
+          setState(() {});
+        }
+      } catch (e) {
+        Get.snackbar('Error', 'Failed to pick image: ${e.toString()}');
+      }
+    } else if (status.isDenied) {
+      Get.snackbar('Permission Required', 'Storage permission is needed to select profile picture');
+    } else if (status.isPermanentlyDenied) {
+      openAppSettings();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: GetBuilder<ProfileCompleteController>(
-            builder:
-                (controller) => SingleChildScrollView(
-                  padding: Dimensions.screenPaddingHorizontal,
-                  child: Form(
-                    key: controller.formKey,
-                    child: Column(
-                      children: [
-                        SizedBox(height: Dimensions.height30),
-
-                        // Profile Picture
-                        Column(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: GetBuilder<ProfileCompleteController>(
+          builder: (controller) => Stack(
+            children: [
+              SizedBox(
+                height: 150,
+                child: HeaderWidget(
+                  150,
+                  false,
+                  Icons.person_add_alt_1_rounded,
+                ),
+              ),
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 80),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: _pickImage,
+                        child: Stack(
                           children: [
-                            GestureDetector(
-                              onTap: controller.pickImage,
-                              child: CircleAvatar(
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(
+                                  width: 1,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 20,
+                                    offset: const Offset(5, 5),
+                                  ),
+                                ],
+                              ),
+                              child: controller.profileImagePath != null
+                                  ? CircleAvatar(
                                 radius: 60,
-                                backgroundColor: AppColors.white.withValues(
-                                  alpha: 0.3,
+                                backgroundImage: FileImage(
+                                  File(controller.profileImagePath!),
                                 ),
-                                backgroundImage:
-                                    controller.profileImage != null
-                                        ? FileImage(controller.profileImage!)
-                                        : null,
-                                child:
-                                    controller.profileImage == null
-                                        ? Icon(
-                                          Icons.camera_alt_outlined,
-                                          size: Dimensions.icon40,
-                                          color: AppColors.primary,
-                                        )
-                                        : null,
+                              )
+                                  : Icon(
+                                Icons.person,
+                                color: Colors.grey.shade300,
+                                size: 110,
                               ),
                             ),
-                            SizedBox(height: Dimensions.height5),
-                            Text(
-                              AppStrings.uploadProfilePicture,
-                              style: AppStyles.greysubtitle,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: Dimensions.height30),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CustomTextFormField(
-                                labelText: AppStrings.firstName,
-                                hintText: "John",
-                                controller: controller.firstNameController,
-                                focusNode: controller.firstNameFocus,
-                                nextFocus: controller.lastNameFocus,
-                                isRequired: false,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return AppStrings.firstName;
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            SizedBox(width: Dimensions.width10),
-                            Expanded(
-                              child: CustomTextFormField(
-                                labelText: AppStrings.lastName,
-                                hintText: "Doe",
-                                controller: controller.lastNameController,
-                                focusNode: controller.lastNameFocus,
-                                nextFocus: controller.usernameFocus,
-                                isRequired: false,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return AppStrings.lastName;
-                                  }
-                                  return null;
-                                },
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.add_a_photo,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                               ),
                             ),
                           ],
                         ),
-
-                        SizedBox(height: Dimensions.height20),
-
-                        // Username
-                        CustomTextFormField(
-                          labelText: AppStrings.userName,
-                          hintText: "johndoe",
-                          controller: controller.usernameController,
-                          focusNode: controller.usernameFocus,
-                          nextFocus: controller.dobFocus,
-                          keyboardType: TextInputType.name,
-                          isRequired: false,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return AppStrings.pleaseEnterUsername;
-                            }
-                            return null;
-                          },
-                        ),
-
-                        SizedBox(height: Dimensions.height20),
-                        // Date of Birth
-                        CustomTextFormField(
-                          labelText: AppStrings.dob,
-                          hintText: "YYYY/MM/DD",
-                          inputFormatters: [DateInputFormatter()],
-                          keyboardType: TextInputType.datetime,
-                          controller: controller.dobController,
-                          focusNode: controller.dobFocus,
-                        ),
-
-                        SizedBox(height: Dimensions.height20),
-
-                        // Gender
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  AppStrings.selectGender,
-                                  style: AppStyles.body.copyWith(
-                                    color: Colors.white,
+                      ),
+                      Form(
+                        key: controller.formKey,
+                        child: Padding(
+                          padding: EdgeInsetsGeometry.all(20),
+                          child: Column(
+                            children: [
+                              Text(
+                                AppStrings.uploadProfilePicture,
+                                style: AppStyles.greysubtitle,
+                              ),
+                              SizedBox(height: Dimensions.height30),
+                              Column(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: Dimensions.height20),
+                                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Field is empty';
+                                        }
+                                        return null;
+                                      },
+                                      controller: controller.firstNameController,
+                                      keyboardType: TextInputType.name,
+                                      focusNode: controller.firstNameFocus,
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.person,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        labelText: 'First Name',
+                                        hintText: 'Enter your first name',
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                // Text(
-                                //   " *",
-                                //   style: AppStyles.body.copyWith(
-                                //     color: Colors.red,
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                            SizedBox(height: 5),
-                            DropdownButtonFormField<String>(
-                              dropdownColor: const Color.fromARGB(
-                                255,
-                                65,
-                                65,
-                                65,
-                              ),
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: AppColors.white.withValues(
-                                  alpha: 0.1,
-                                ),
-
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: Dimensions.width20,
-                                  vertical: Dimensions.height15,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    Dimensions.radius10,
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: Dimensions.height20),
+                                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Field is empty';
+                                        }
+                                        return null;
+                                      },
+                                      controller: controller.lastNameController,
+                                      keyboardType: TextInputType.name,
+                                      focusNode: controller.lastNameFocus,
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.person_outline,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        labelText: 'Last Name',
+                                        hintText: 'Enter your last name',
+                                      ),
+                                    ),
                                   ),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                              hint: Text(
-                                AppStrings.selectGender,
-                                style: AppStyles.body,
-                              ),
-                              value: controller.selectedGender,
-                              style: AppStyles.body,
-                              items:
-                                  [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: Dimensions.height20),
+                                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Field is empty';
+                                        }
+                                        return null;
+                                      },
+                                      controller: controller.usernameController,
+                                      keyboardType: TextInputType.name,
+                                      focusNode: controller.usernameFocus,
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.alternate_email,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        labelText: 'Username',
+                                        hintText: 'Enter your username',
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: Dimensions.height20),
+                                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Field is empty';
+                                        }
+                                        return null;
+                                      },
+                                      controller: controller.dobController,
+                                      keyboardType: TextInputType.datetime,
+                                      focusNode: controller.dobFocus,
+                                      readOnly: true,
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.calendar_today,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        labelText: 'Date of Birth',
+                                        hintText: 'DD/MM/YYYY',
+                                      ),
+                                      onTap: () async {
+                                        FocusScope.of(context).requestFocus(FocusNode());
+                                        final date = await showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime(1900),
+                                          lastDate: DateTime.now(),
+                                        );
+                                        if (date != null) {
+                                          final formattedDate =
+                                              "${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
+                                          controller.dobController.text = formattedDate;
+                                          debugPrint('date :: $formattedDate'); // moved here
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: Dimensions.height20),
+                                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
+                                    child: DropdownButtonFormField<String>(
+                                      dropdownColor: AppColors.white,
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.transgender,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: Dimensions.width15,
+                                        ),
+                                      ),
+                                      hint: Text(
+                                        AppStrings.selectGender,
+                                        style: AppStyles.body,
+                                      ),
+                                      value: controller.selectedGender,
+                                      style: AppStyles.body,
+                                      items: [
                                         AppStrings.male,
                                         AppStrings.female,
                                         AppStrings.other,
-                                      ]
-                                      .map(
-                                        (gender) => DropdownMenuItem(
-                                          value: gender,
-                                          child: Text(gender),
-                                        ),
-                                      )
-                                      .toList(),
-                              onChanged: controller.setGender,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return AppStrings.pleaseSelectGender;
-                                }
-                                return null;
-                              },
-                            ),
-                          ],
+                                      ].map((gender) => DropdownMenuItem(
+                                        value: gender,
+                                        child: Text(gender),
+                                      )).toList(),
+                                      onChanged: controller.setGender,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return AppStrings.pleaseSelectGender;
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: Dimensions.height30),
+                              CustomElevatedButton(
+                                title: AppStrings.save,
+                                onTap: controller.submitProfile,
+                              ),
+                              SizedBox(height: Dimensions.height20),
+                            ],
+                          ),
                         ),
-
-                        SizedBox(height: Dimensions.height30),
-
-                        CustomElevatedButton(
-                          title: AppStrings.save,
-                          onTap: controller.submitProfile,
-                        ),
-
-                        SizedBox(height: Dimensions.height20),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
+              ),
+              if (controller.isLoading)
+                Container(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+            ],
           ),
         ),
       ),

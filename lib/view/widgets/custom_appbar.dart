@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/theme_controller.dart';
+import 'package:hobby_club_app/controller/raw/theme_controller.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool centerTitle;
   final bool isLeading;
+  final bool isAction;
+  final IconData? actionIcon;
+  final Function()? onAction;
 
   const CustomAppBar({
     super.key,
     required this.title,
     this.centerTitle = true,
     this.isLeading = true,
+    this.isAction = false,
+    this.actionIcon,
+    this.onAction,
   });
 
   @override
@@ -38,6 +44,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               )
               : SizedBox.shrink(),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child:
+              isAction
+                  ? InkWell(
+                onTap: onAction,
+                    child: Icon(
+                      actionIcon,
+                      size: 30,
+                      color:
+                          themeController.themeMode.value == ThemeMode.dark
+                              ? Colors.white
+                              : Colors.black,
+                    ),
+                  )
+                  : SizedBox.shrink(),
+        ),
+      ],
       automaticallyImplyLeading: false,
     );
   }

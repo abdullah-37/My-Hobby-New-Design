@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hobby_club_app/models/auth/registration_model.dart';
-import 'package:hobby_club_app/models/response_model.dart';
+import 'package:hobby_club_app/models/raw/response_model.dart';
 import 'package:hobby_club_app/repo/auth/register_repo.dart';
 import 'package:hobby_club_app/utils/app_strings.dart';
 import 'package:hobby_club_app/view/screens/auth/profile_complete_screen.dart';
