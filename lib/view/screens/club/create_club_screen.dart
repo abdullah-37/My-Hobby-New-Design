@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:hobby_club_app/controller/category_controller.dart';
+import 'package:hobby_club_app/controller/categories/category_controller.dart';
 import 'dart:io';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/create_club_controller.dart';
-import 'package:hobby_club_app/models/category_model.dart';
+import 'package:hobby_club_app/controller/club/create_club_controller.dart';
+import 'package:hobby_club_app/models/club/categories/category_model.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateClubScreen extends StatefulWidget {
-  const CreateClubScreen({Key? key}) : super(key: key);
+  const CreateClubScreen({super.key});
 
   @override
   State<CreateClubScreen> createState() => _CreateClubScreenState();
@@ -84,7 +84,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Club created successfully!'),
+          content: const Text('Request to create Club successfully!'),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -408,7 +408,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                             ),
                           )
                           : Text(
-                            'Create Club',
+                            'Request to approve Club',
                             style: Theme.of(context).textTheme.labelLarge
                                 ?.copyWith(color: Colors.white, fontSize: 16),
                           ),

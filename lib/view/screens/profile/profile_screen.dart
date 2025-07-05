@@ -1,21 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:hobby_club_app/controller/raw/hide_floating_button_controller.dart';
-import 'package:hobby_club_app/controller/raw/notifications_controller.dart';
 import 'package:hobby_club_app/controller/profile/profile_controller.dart';
-import 'package:hobby_club_app/controller/raw/theme_controller.dart';
-import 'package:hobby_club_app/models/raw/user_model.dart';
+import 'package:hobby_club_app/controller/theme/theme_controller.dart';
+import 'package:hobby_club_app/models/auth/profile_model.dart';
+import 'package:hobby_club_app/models/common/user_model.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/app_strings.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
-import 'package:hobby_club_app/utils/style.dart';
-import 'package:hobby_club_app/view/screens/auth/login_screen.dart';
-import 'package:hobby_club_app/view/widgets/custom_button.dart';
-import 'package:hobby_club_app/view/widgets/custom_club_card.dart';
+import 'package:hobby_club_app/view/Settings/settings_screen.dart';
 import 'package:hobby_club_app/view/widgets/custom_network_image.dart';
 import 'package:hobby_club_app/view/widgets/header_widget.dart';
+import 'package:hobby_club_app/view/widgets/image_view.dart';
 
 import 'edit_profile_screen.dart';
 
@@ -29,14 +25,15 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   GetStorage storage = GetStorage();
   User? user;
+  ProfileModel? profile;
   bool isLoading = true;
-  String currentScreen = '1';
-  final bool _notificationsEnabled = true;
+  String currentScreen = 'Accepted';
 
   @override
   void initState() {
     Get.put(ProfileController());
     loadUser();
+    loadProfile();
     super.initState();
   }
 
@@ -57,29 +54,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         isLoading = false;
       });
+      debugPrint('Error loading user: $e');
+    }
+  }
+
+  Future<void> loadProfile() async {
+    try {
+      final profileData = storage.read('profile');
+      if (profileData != null) {
+        setState(() {
+          profile = ProfileModel.fromJson(profileData);
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       debugPrint('Error loading profile: $e');
     }
   }
 
-  String currentView = 'Monthly'; // Changed from currentScreen to currentView
-
   @override
   Widget build(BuildContext context) {
     ThemeController themeController = Get.find<ThemeController>();
-    final floatingController = Get.find<FloatingButtonController>();
-
-    NotificationsController notificationsController =
-        Get.find<NotificationsController>();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
-          "Settings",
+          "Profile",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         elevation: 0.5,
         iconTheme: IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.to(const SettingsScreen());
+            },
+            icon: const Icon(Icons.settings),
+          ),
+        ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -109,181 +129,153 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      Container(
-                        // padding: Dimensions.screenPaddingHV,
-                        // decoration: BoxDecoration(color: AppColors.background),
-                        child: Column(
-                          children: [
-                            CustomNetworkImage(
+                      Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Get.to(() => ImageView(image: controller.profile.img!,title: 'Profile Image',));
+                            },
+                            child: CustomNetworkImage(
                               size: Dimensions.width100,
                               imageUrl:
                                   controller.profile.img ??
                                   'https://lh3.googleusercontent.com/aida-public/AB6AXuADwPMLnjDQoHaeflMfxpDvSV1hUYxmTcoELxjPF34XVVN6-I9GjPc-kk60zdyfrTWmmr0VqCv85bEzPmEH6uRdnEJzsEff9wknyuv1jbuCRa_rDTgAsoGw-xGHzl_sktSiN97lMvbisMky4u8btqG2bqta5YZrS7gpJexqRXNSSkjxFSvruF_I85dAPh3QnHzZ5O2pOM774DFzRlwU7CgJM6gBn2w6sbAO8kF8A8lwot-cpnKdsLQUpu4PUujOyxesvZSRkhqGkgsu',
                             ),
-                            SizedBox(height: Dimensions.height20),
+                          ),
+                          SizedBox(height: Dimensions.height20),
 
-                            Text(
-                              'Muhammad Abdullah',
-                              style: Theme.of(context).textTheme.displayLarge,
-                            ),
+                          Text(
+                            '${profile!.firstName} ${profile!.lastName}',
+                            style: Theme.of(context).textTheme.displayLarge,
+                          ),
 
-                            SizedBox(height: Dimensions.height20),
-                            SingleChildScrollView(
-                              child: Column(
-                                spacing: Dimensions.height10,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Profile Details',
-                                        style:
-                                            Theme.of(
-                                              context,
-                                            ).textTheme.titleMedium,
+                          SizedBox(height: Dimensions.height20),
+                          SingleChildScrollView(
+                            child: Column(
+                              spacing: Dimensions.height10,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Profile Details',
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).textTheme.titleMedium,
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Get.to(const EditProfileScreen());
+                                      },
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: AppColors.primary,
+                                        size: 25,
                                       ),
-                                      InkWell(
-                                        onTap: () {
-                                          Get.to(const EditProfileScreen());
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          color: AppColors.primary,
-                                          size: 25,
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  spacing: 20,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Column(
+                                      spacing: Dimensions.height10,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          spacing: 10,
+                                          children: [
+                                            Icon(
+                                              Icons.email,
+                                              color: AppColors.primary,
+                                              size: 22,
+                                            ),
+                                            Text(
+                                              user?.email ?? 'Not provided',
+                                              style:
+                                                  Theme.of(
+                                                    context,
+                                                  ).textTheme.labelLarge,
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    spacing: 20,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Column(
-                                        spacing: Dimensions.height10,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            spacing: 10,
-                                            children: [
-                                              Icon(
-                                                Icons.email,
-                                                color: AppColors.primary,
-                                                size: 22,
-                                              ),
-                                              Text(
-                                                user?.email ?? 'Not provided',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.labelLarge,
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            spacing: 10,
-                                            children: [
-                                              Icon(
-                                                Icons.phone,
-                                                color: AppColors.primary,
-                                                size: 22,
-                                              ),
-                                              Text(
-                                                user?.phone ?? 'Not provided',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.labelLarge,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        spacing: Dimensions.height10,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            spacing: 10,
-                                            children: [
-                                              Icon(
-                                                Icons.cake,
-                                                color: AppColors.primary,
-                                                size: 22,
-                                              ),
-                                              Text(
-                                                controller.profile.dob ??
-                                                    'Not provided',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.labelLarge,
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            spacing: 10,
-                                            children: [
-                                              Icon(
-                                                Icons.transgender,
-                                                color: AppColors.primary,
-                                                size: 22,
-                                              ),
-                                              Text(
-                                                controller.profile.gender ??
-                                                    'Not provided',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.labelLarge,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                        Row(
+                                          spacing: 10,
+                                          children: [
+                                            Icon(
+                                              Icons.phone,
+                                              color: AppColors.primary,
+                                              size: 22,
+                                            ),
+                                            Text(
+                                              user?.phone ?? 'Not provided',
+                                              style:
+                                                  Theme.of(
+                                                    context,
+                                                  ).textTheme.labelLarge,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      spacing: Dimensions.height10,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          spacing: 10,
+                                          children: [
+                                            Icon(
+                                              Icons.cake,
+                                              color: AppColors.primary,
+                                              size: 22,
+                                            ),
+                                            Text(
+                                              controller.profile.dob ??
+                                                  'Not provided',
+                                              style:
+                                                  Theme.of(
+                                                    context,
+                                                  ).textTheme.labelLarge,
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          spacing: 10,
+                                          children: [
+                                            Icon(
+                                              Icons.transgender,
+                                              color: AppColors.primary,
+                                              size: 22,
+                                            ),
+                                            Text(
+                                              controller.profile.gender ??
+                                                  'Not provided',
+                                              style:
+                                                  Theme.of(
+                                                    context,
+                                                  ).textTheme.labelLarge,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      // SizedBox(height: Dimensions.height10),
-                      // //edit profile button
-                      // Container(
-                      //   decoration: ThemeHelper().buttonBoxDecoration(context),
-                      //   child: ElevatedButton(
-                      //     style: ThemeHelper().buttonStyle(),
-                      //     child: Padding(
-                      //       padding: EdgeInsets.only(),
-                      //       child: Text(
-                      //         'Edit Profile'.toUpperCase(),
-                      //         style: TextStyle(
-                      //           fontSize: 20,
-                      //           fontWeight: FontWeight.bold,
-                      //           color: Colors.white,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     onPressed: () {
-                      //       Get.to(() => EditProfileScreen());
-                      //       // //After successful login we will redirect to profile page. Let's create profile page now
-                      //       // Navigator.pushReplacement(
-                      //       //   context,
-                      //       //   MaterialPageRoute(
-                      //       //     builder: (context) => ProfilePage(),
-                      //       //   ),
-                      //       // );
-                      //     },
-                      //   ),
-                      // ),
                       SizedBox(height: Dimensions.height20),
                       Align(
                         alignment: AlignmentDirectional.centerStart,
@@ -330,7 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: AnimatedAlign(
                                     duration: const Duration(milliseconds: 300),
                                     alignment:
-                                        currentView == '1'
+                                        currentScreen == 'Accepted'
                                             ? Alignment.centerLeft
                                             : Alignment.centerRight,
                                     child: Container(
@@ -351,7 +343,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       child: GestureDetector(
                                         onTap: () {
                                           setState(() {
-                                            currentView = '1';
+                                            currentScreen = 'Accepted';
                                           });
                                         },
                                         child: Center(
@@ -359,7 +351,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             title: 'Accepted',
                                             bgColor: Colors.transparent,
                                             textColor:
-                                                currentView == '1'
+                                                currentScreen == 'Accepted'
                                                     ? Colors.white
                                                     : AppColors.secondary,
                                           ),
@@ -370,7 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       child: GestureDetector(
                                         onTap: () {
                                           setState(() {
-                                            currentView = '0';
+                                            currentScreen = 'Pending';
                                           });
                                         },
                                         child: Center(
@@ -378,7 +370,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             title: 'Pending',
                                             bgColor: Colors.transparent,
                                             textColor:
-                                                currentView == '0'
+                                                currentScreen == 'Pending'
                                                     ? Colors.white
                                                     : AppColors.secondary,
                                           ),
@@ -392,123 +384,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       ),
-                      currentScreen == '1'
+                      currentScreen == 'Accepted'
                           ? acceptedClubs(controller: controller)
                           : pendingClubs(controller: controller),
-                      SizedBox(height: Dimensions.height5),
-                      Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Text(
-                          'Settings',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.titleMedium!.copyWith(fontSize: 28),
-                        ),
-                      ),
                       SizedBox(height: Dimensions.height10),
-                      Column(
-                        spacing: 20,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Language',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              Spacer(),
-                              Text('English', style: AppStyles.greysubtitle),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'Region',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              Spacer(),
-                              Text('Pakistan', style: AppStyles.greysubtitle),
-                            ],
-                          ),
-                          Obx(
-                            () => Row(
-                              children: [
-                                Text(
-                                  'Notifications',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                const Spacer(),
-                                CupertinoSwitch(
-                                  value:
-                                      notificationsController
-                                          .isSubscribed
-                                          .value,
-                                  onChanged: (bool newValue) {
-                                    notificationsController.toggleNotifications(
-                                      newValue,
-                                    );
-                                  },
-                                  activeTrackColor:
-                                      Theme.of(context).primaryColor,
-                                ),
-                              ],
-                            ),
-                          ),
-                          // disable floating button
-                          Obx(
-                            () => Row(
-                              children: [
-                                Text(
-                                  'Floating Button',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                const Spacer(),
-                                CupertinoSwitch(
-                                  value: floatingController.isVisible.value,
-                                  onChanged: (bool newValue) {
-                                    floatingController.toggleVisibility();
-                                  },
-                                  activeTrackColor:
-                                      Theme.of(context).primaryColor,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      CustomElevatedButton(
-                        title: AppStrings.logout,
-                        onTap: () {
-                          Get.dialog(
-                            AlertDialog(
-                              title: const Text("Confirm Logout"),
-                              content: const Text(
-                                "Are you sure you want to log out?",
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Get.back(),
-                                  child: const Text("Cancel"),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    Get.back();
-                                    await storage.remove("user");
-                                    await storage.remove("profile");
-                                    await storage.remove("token");
-                                    Get.offAll(LoginScreen());
-                                  },
-                                  child: const Text(
-                                    AppStrings.logout,
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                          // Get.to(EditProfileScreen());
-                        },
-                      ),
                     ],
                   ),
                 ),
@@ -524,39 +403,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return controller.isLoading
         ? Center(child: CircularProgressIndicator())
         : controller.allClubs.isNotEmpty
-        ? Padding(
-          padding: Dimensions.screenPaddingHV,
-          child: Column(
-            children: [
-              controller.acceptedClubs.isNotEmpty
-                  ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(AppStrings.myClubs, style: AppStyles.largeHeading),
-                      SizedBox(height: Dimensions.height10),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: controller.acceptedClubs.length,
-                        itemBuilder: (context, index) {
-                          var data = controller.acceptedClubs[index];
-                          return CustomClubCard(
-                            eventsCount: 3,
-                            membersCount: data.membersCount.toString(),
-                            imageUrl: data.img,
-                            title: data.title,
-                            subtitle:
-                                "${data.membersCount}. ${AppStrings.members}",
-                            status: data.status,
-                            desc: data.desc,
-                          );
-                        },
+        ? Column(
+          children: [
+            controller.acceptedClubs.isNotEmpty
+                ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: InkWell(
+                        onTap: () {},
+                        child: Text(
+                          'Visit All',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ),
-                    ],
-                  )
-                  : Container(),
-            ],
-          ),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount:
+                          controller.acceptedClubs.length > 2
+                              ? 2
+                              : controller.acceptedClubs.length,
+                      itemBuilder: (context, index) {
+                        var data = controller.acceptedClubs[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: _buildJoinedClubCard(
+                            title: data.title,
+                            image: data.img,
+                            category: data.category,
+                            description: data.desc,
+                            events: data.totalSchedules,
+                            members: data.totalMembers,
+                            onTap: () {},
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                )
+                : Container(),
+          ],
         )
         : Padding(
           padding: Dimensions.screenPaddingHV,
@@ -573,47 +466,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return controller.isLoading
         ? Center(child: CircularProgressIndicator())
         : controller.allClubs.isNotEmpty
-        ? Padding(
-          padding: Dimensions.screenPaddingHV,
-          child: Column(
-            children: [
-              controller.pendingClubs.isNotEmpty
-                  ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppStrings.pendingClubs,
-                        style: AppStyles.largeHeading,
+        ? Column(
+          children: [
+            controller.pendingClubs.isNotEmpty
+                ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Text(
+                        'Visit All',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
+                        ),
                       ),
-                      SizedBox(height: Dimensions.height10),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: controller.pendingClubs.length,
-                        itemBuilder: (context, index) {
-                          var data = controller.pendingClubs[index];
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              bottom: Dimensions.padding15,
-                            ),
-                            child: CustomClubCard(
-                              eventsCount: 3,
-                              membersCount: data.membersCount.toString(),
-                              imageUrl: data.img,
-                              title: data.title,
-                              subtitle:
-                                  "${data.membersCount}. ${AppStrings.members}",
-                              status: data.status,
-                              desc: data.desc,
-                            ),
-                          );
-                        },
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount:
+                          controller.pendingClubs.length > 2
+                              ? 2
+                              : controller.pendingClubs.length,
+                      itemBuilder: (context, index) {
+                        var data = controller.pendingClubs[index];
+                        return _buildJoinedClubCard(
+                          title: data.title,
+                          image: data.img,
+                          category: data.category,
+                          description: data.desc,
+                          events: data.totalSchedules,
+                          members: data.totalMembers,
+                          onTap: () {},
+                        );
+                      },
+                    ),
+                    if (controller.pendingClubs.length > 2)
+                      TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'Show More (${controller.pendingClubs.length - 2})',
+                          style: TextStyle(color: Colors.blue),
+                        ),
                       ),
-                    ],
-                  )
-                  : Container(),
-            ],
-          ),
+                  ],
+                )
+                : Container(),
+          ],
         )
         : Padding(
           padding: Dimensions.screenPaddingHV,
@@ -624,6 +525,103 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         );
+  }
+
+  Widget _buildJoinedClubCard({
+    required String image,
+    required String category,
+    required String title,
+    required String description,
+    required int members,
+    required int events,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    category,
+                    style: const TextStyle(
+                      color: Color(0xFF5C748A),
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(title, style: Theme.of(context).textTheme.bodyLarge),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      color: Color(0xFF5C748A),
+                      fontSize: 14,
+                    ),
+                    maxLines: 2,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Members: $members',
+                        style: const TextStyle(
+                          color: Color(0xFF5C748A),
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        'Events: $events',
+                        style: const TextStyle(
+                          color: Color(0xFF5C748A),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              flex: 1,
+              child: AspectRatio(
+                aspectRatio: 10 / 9,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    image,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildErrorImage();
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorImage({double size = double.infinity}) {
+    return Container(
+      color: Colors.grey[800],
+      width: size,
+      height: size,
+      child: const Icon(Icons.broken_image, color: Colors.white),
+    );
   }
 
   Widget buildStatusItem({

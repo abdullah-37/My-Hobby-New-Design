@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/club_event_controller.dart';
+import 'package:hobby_club_app/controller/club/club_event_controller.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
-import 'package:hobby_club_app/view/activities%20view/event_details_page.dart';
-import 'package:hobby_club_app/view/activities%20view/widgets/event_widget.dart';
-import 'package:hobby_club_app/view/screens/events/create_event_screen.dart';
+import 'package:hobby_club_app/view/screens/events/event_details_page.dart';
+import 'package:hobby_club_app/view/screens/events/widgets/event_widget.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 import 'package:shimmer/shimmer.dart';
 
 class AllClubEventScreen extends StatefulWidget {
 
-  AllClubEventScreen({super.key});
+  const AllClubEventScreen({super.key});
 
   @override
   State<AllClubEventScreen> createState() => _AllClubEventScreenState();
@@ -47,17 +46,19 @@ class _AllClubEventScreenState extends State<AllClubEventScreen> {
           }
 
           return ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: events.length,
             itemBuilder: (context, index) {
-              final event = events[index];
-              return EventWidget(
-                event: event,
-                onAction: () {
-                  Get.to(() => EventDetailsPage(eventDetail: event));
-                },
-              );
+              return Obx(() {
+                final event = clubEventController.clubEventModel.value?.data[index];
+                return EventWidget(
+                  event: event ?? events[index],
+                  onAction: () {
+                    debugPrint('all club event profile.id! :: ${clubEventController.user.id!}');
+                    Get.to(() => EventDetailsPage(eventDetail: event ?? events[index],userId: clubEventController.user.id!,));
+                  },
+                );
+              });
             },
           );
         }),

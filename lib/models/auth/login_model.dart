@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:hobby_club_app/models/auth/profile_model.dart';
-import 'package:hobby_club_app/models/raw/user_model.dart';
+import 'package:hobby_club_app/models/common/user_model.dart';
 
 LoginModel loginModelFromJson(String str) =>
     LoginModel.fromJson(json.decode(str));

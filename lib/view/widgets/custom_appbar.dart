@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/raw/theme_controller.dart';
+import 'package:hobby_club_app/controller/theme/theme_controller.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;

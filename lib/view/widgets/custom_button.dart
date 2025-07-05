@@ -4,10 +4,12 @@ import 'package:hobby_club_app/utils/theme/theme_helper.dart';
 class CustomElevatedButton extends StatelessWidget {
   final String title;
   final Function() onTap;
+  final bool isLoading;
   const CustomElevatedButton({
     super.key,
     required this.onTap,
     required this.title,
+    this.isLoading = false,
   });
 
   @override
@@ -17,8 +19,12 @@ class CustomElevatedButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         style: ThemeHelper().buttonStyle(),
-        onPressed: onTap,
-        child: Padding(
+        onPressed: isLoading ? null : onTap,
+        child: isLoading
+            ? const CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        )
+            : Padding(
           padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
           child: Text(
             title.toUpperCase(),

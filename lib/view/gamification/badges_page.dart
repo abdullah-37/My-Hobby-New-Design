@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:hobby_club_app/models/club/gamification/badges/badges_model.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BadgesPage extends StatefulWidget {
-  const BadgesPage({super.key});
+  final BadgeModel badgeModel;
+  const BadgesPage({super.key, required this.badgeModel});
 
   @override
   State<BadgesPage> createState() => _BadgesPageState();
 }
 
 class _BadgesPageState extends State<BadgesPage> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,44 +38,25 @@ class _BadgesPageState extends State<BadgesPage> {
             ),
           ),
           Expanded(
-            child: GridView.count(
+            child: _isLoading
+                ? _buildShimmerGrid()
+                : GridView.builder(
               padding: const EdgeInsets.all(16),
-              crossAxisCount: 2,
-              childAspectRatio: 0.76,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              children: [
-                _badgeItem(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuCLw0Mwb8TF6vkgnwp05JP2Am-AC0HlUrH0bhYXHv_ehHLNb6MM5ctyAJbtd7nMdgjI3DSi8Hg6J0RjQ8NqHmltBKYmUAIqtm3I-0yFroPRKpW9c_oq7KBkJq2fx_M6DYmRa6w_mowILjOnOJeD9ueM9T0QdMCpcgt8VesCF32PYOfMbj3hf8kgSHwteD4U3rWnuLO0j8NH4BwDqSKOaQli1oIrovKPzSLF7vPurMf0xbRuuW51L2RO398G3tygGp57TkhVIiYFhzpk',
-                  'First Timer',
-                  'Join your first event',
-                ),
-                _badgeItem(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuDzBYg62XFdUCq7Nk_hfeyExYNgejyRBOXm92kShVVObEHfAROGP3m_1X5lMWnt6YqeEkuAdawL6eprlEt348aP3Zhu894yKXNoaUOi7kBH8EKfJlgphKpEoxpxRB3BRQjoFHKBpIkHoGfzi76_ESG83icNJ2VH4WkuSW2um0M0i_iPtUYH3EKxL0UiIm3iCYz7bjatAfyKm3Chx_YK0kABSJL8crug2He11pHokfGFrdBrUoFTWjv_EsgEwY-Ak7lJCBdnjm_85F_U',
-                  'Active Member',
-                  'Attend 5 events',
-                ),
-                _badgeItem(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuDjGL__8PTPRdaeilwHsb-f38KT3p8TVU8Ww46GUDuG8OAsbXgg0iQVUgA4Bk60gcOGEKqlBJv5sNvfGLO3Xmyk7UjM-WYKKr4fYv660qgXHS44EoRBZ4-O4ULD6ZvdjjMDWCRQuLIsp9m8YCDIC2Nb8sqotByNqfU_xv8G0bVSp1y-pmjc2LF7SpA4zN8oXUUxW3DpMomsXDgMvjcyk-3nPYklFbhnlxpThrhHW3weQcdrbWixxrRaSk3d4sH7HysjhfOsKcTyyzBj',
-                  'Club Hero',
-                  'Host an event',
-                ),
-                _badgeItem(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuDu7QQoO5HKiMabw-6Lt_SmE7hGUt9_P1xcU_WATEOZTXksdk3T2aw_HV4XGWMqGiP2oUmE5b5ImYMKTDn9SDR1mRYfio3EVDeMWoRkQbCk7SygZpY91cj3-AY-TeLnLyIg57BrIItYlQcfj35mJWHEEir2DVowkqj3Pknm5N2KlbrID7FvVRhPWTGAyAPd7vt8aCdyONDO0GlwE_qF2UFJvFS4cuFo3JZPMiJ7tAoYRduuPeepU_u7k4lkA4Tslh-yElYrf3lbKWnI',
-                  'Challenge Winner',
-                  'Win a challenge',
-                ),
-                _badgeItem(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuDjGL__8PTPRdaeilwHsb-f38KT3p8TVU8Ww46GUDuG8OAsbXgg0iQVUgA4Bk60gcOGEKqlBJv5sNvfGLO3Xmyk7UjM-WYKKr4fYv660qgXHS44EoRBZ4-O4ULD6ZvdjjMDWCRQuLIsp9m8YCDIC2Nb8sqotByNqfU_xv8G0bVSp1y-pmjc2LF7SpA4zN8oXUUxW3DpMomsXDgMvjcyk-3nPYklFbhnlxpThrhHW3weQcdrbWixxrRaSk3d4sH7HysjhfOsKcTyyzBj',
-                  'Club Hero',
-                  'Host an event',
-                ),
-                _badgeItem(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuDu7QQoO5HKiMabw-6Lt_SmE7hGUt9_P1xcU_WATEOZTXksdk3T2aw_HV4XGWMqGiP2oUmE5b5ImYMKTDn9SDR1mRYfio3EVDeMWoRkQbCk7SygZpY91cj3-AY-TeLnLyIg57BrIItYlQcfj35mJWHEEir2DVowkqj3Pknm5N2KlbrID7FvVRhPWTGAyAPd7vt8aCdyONDO0GlwE_qF2UFJvFS4cuFo3JZPMiJ7tAoYRduuPeepU_u7k4lkA4Tslh-yElYrf3lbKWnI',
-                  'Challenge Winner',
-                  'Win a challenge',
-                ),
-              ],
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.76,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+              ),
+              itemCount: widget.badgeModel.data.length,
+              itemBuilder: (context, index) {
+                final badge = widget.badgeModel.data[index];
+                return _badgeItem(
+                  title: badge.title,
+                  type: badge.type,
+                  imageUrl: badge.image,
+                );
+              },
             ),
           ),
         ],
@@ -69,7 +64,7 @@ class _BadgesPageState extends State<BadgesPage> {
     );
   }
 
-  Widget _badgeItem(String imageUrl, String title, String description) {
+  Widget _badgeItem({required String imageUrl, required String title, required String type}) {
     return Container(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -100,7 +95,7 @@ class _BadgesPageState extends State<BadgesPage> {
             textAlign: TextAlign.center,
           ),
           Text(
-            description,
+            type,
             style: const TextStyle(
               fontSize: 14,
               color: Color(0xFF4E7F97),
@@ -111,4 +106,56 @@ class _BadgesPageState extends State<BadgesPage> {
       ),
     );
   }
+
+  Widget _buildShimmerGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.76,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+      ),
+      itemCount: 6,
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 16,
+                  width: 80,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 6),
+                Container(
+                  height: 14,
+                  width: 100,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 }

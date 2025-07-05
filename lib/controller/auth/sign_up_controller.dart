@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hobby_club_app/controller/notification/notifications_controller.dart';
 import 'package:hobby_club_app/models/auth/registration_model.dart';
-import 'package:hobby_club_app/models/raw/response_model.dart';
+import 'package:hobby_club_app/models/common/response_model.dart';
 import 'package:hobby_club_app/repo/auth/register_repo.dart';
 import 'package:hobby_club_app/utils/app_strings.dart';
 import 'package:hobby_club_app/view/screens/auth/profile_complete_screen.dart';
@@ -13,6 +16,7 @@ class SignUpController extends GetxController {
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final notificationsController = Get.put(NotificationsController());
 
   final emailFocus = FocusNode();
   final phoneFocus = FocusNode();
@@ -55,6 +59,10 @@ class SignUpController extends GetxController {
 
         ResponseModel response = await repo.registerUser(registrationModel);
         if (response.isSuccess) {
+          final responseData = json.decode(response.responseJson);
+          final userId = responseData['user']['id'].toString();
+
+          notificationsController.initialize(userId: userId);
           Get.off(ProfileCompleteScreen());
           showCustomSnackBar(AppStrings.success, response.message);
         } else {

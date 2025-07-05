@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/category_controller.dart';
-import 'package:hobby_club_app/controller/my_join_club_controller.dart';
-import 'package:hobby_club_app/controller/trending_club_controller.dart';
+import 'package:hobby_club_app/controller/categories/category_controller.dart';
+import 'package:hobby_club_app/controller/club/my_join_club_controller.dart';
+import 'package:hobby_club_app/controller/club/trending_club_controller.dart';
 import 'package:hobby_club_app/view/categories/all_catgories_screen.dart';
 import 'package:hobby_club_app/view/categories/explore_clubs_screen.dart';
 import 'package:hobby_club_app/view/screens/club/club_details_page.dart';
@@ -19,6 +19,7 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+
   final trendingClubController = Get.put(TrendingClubController());
   final categoryController = Get.put(CategoryController());
   final joinClubController = Get.put(MyJoinClubController());
@@ -126,6 +127,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       clubImage: club.img,
                       clubName: club.title,
                       clubDesc: club.desc,
+                      clubMembers: club.totalMembers.toString(),
                     ),
                   );
                 } else {
@@ -209,6 +211,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     clubImage: club.img,
                     clubName: club.title,
                     clubDesc: club.desc,
+                    clubMembers: club.totalMembers.toString(),
                   ),
                 ),
           );

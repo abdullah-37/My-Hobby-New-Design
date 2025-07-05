@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/category_controller.dart';
+import 'package:hobby_club_app/controller/categories/category_controller.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
+import 'package:hobby_club_app/view/categories/explore_clubs_screen.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 
 class AllCategoriesScreen extends StatefulWidget {
@@ -83,7 +84,14 @@ class _AllCategoriesScreenState extends State<AllCategoriesScreen> {
                   itemBuilder: (context, index) {
                     final category = filteredCategories[index];
                     return GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Get.to(
+                              () => ExploreClubsScreen(
+                            categoryName: category.title,
+                            categoryId: category.id.toString(),
+                          ),
+                        );
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(

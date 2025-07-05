@@ -1,310 +1,491 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/models/raw/discussions_details_model.dart';
-import 'package:hobby_club_app/utils/app_colors.dart';
-import 'package:hobby_club_app/utils/app_images.dart';
-import 'package:hobby_club_app/utils/constants.dart';
-import 'package:hobby_club_app/utils/dimensions.dart';
-import 'package:hobby_club_app/view/chat%20view/chat_screen.dart';
-import 'package:hobby_club_app/view/discussion%20view/widgets/reply_discussion_widget.dart';
-import 'package:hobby_club_app/view/widgets/custom_network_image.dart';
+import 'package:hobby_club_app/controller/club/discussion/discussions_detail_controller.dart';
+import 'package:hobby_club_app/models/club/discussion/discussions_detail_model.dart';
+import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
+import 'package:shimmer/shimmer.dart';
 
-class DisussionDetailScreen extends StatelessWidget {
-  const DisussionDetailScreen({super.key});
+class DiscussionDetailScreen extends StatefulWidget {
+  final String clubId;
+  final String discussionId;
+
+  const DiscussionDetailScreen({
+    super.key,
+    required this.clubId,
+    required this.discussionId,
+  });
+
+  @override
+  State<DiscussionDetailScreen> createState() => _DiscussionDetailScreenState();
+}
+
+class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
+  final controller = Get.put(DiscussionsDetailController());
+
+  @override
+  void initState() {
+    controller.fetchDiscussionDetails(
+      clubId: widget.clubId,
+      discussionsId: widget.discussionId,
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // DiscussionDetailsController discussionDetailsController = Get.put(
-    //   DiscussionDetailsController(),
-    // );
-
     return Scaffold(
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        // automaticallyImplyLeading: false,
-        // leading: GestureDetector(
-        //   onTap: () {
-        //     Get.back(result: true);
-        //   },
-        //   child: const Icon(Icons.arrow_back),
-        // ),
-        backgroundColor: AppColors.scaffoldBG,
-        title: const FittedBox(
-          child: CustomAppBarTitle(title: "Elections: Date of Club Elections"),
-        ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: CustomAppBar(title: 'Discussions', isLeading: true),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  ShimmerDiscussionHeader(),
+                  SizedBox(height: 24),
+                  ShimmerRepliesTitle(),
+                  SizedBox(height: 16),
+                  ShimmerRepliesList(),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (controller.errorMessage.value.isNotEmpty) {
+          return Center(
+            child: Text(
+              controller.errorMessage.value,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: Colors.red),
+            ),
+          );
+        }
+
+        return Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                controller: controller.scrollController,
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDiscussionHeader(controller),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Replies (${controller.replies.length})',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 16),
+                    controller.replies.isEmpty
+                        ? _buildEmptyReplies(context)
+                        : _buildRepliesList(controller),
+                  ],
+                ),
+              ),
+            ),
+            _buildReplyInput(controller),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _buildDiscussionHeader(DiscussionsDetailController controller) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      body: Padding(
-        padding: Dimensions.screenPaddingHorizontal,
-        // child: Obx(
-        //   () =>
-        //       discussionDetailsController.isLoading.value
-        //           ? Center(
-        //             child: CircularProgressIndicator(color: AppColors.primary),
-        //           )
-        //           : Column(
-        //             crossAxisAlignment: CrossAxisAlignment.start,
-        //             children: [
-        //               const SizedBox(height: 10),
-        //
-        //               DiscussionDetailWidget(
-        //                 image:
-        //                     discussionDetailsController
-        //                         .discussionReplies[0]
-        //                         .profile
-        //                         .img,
-        //                 time: discussionDetailsController.timeAgoSince(
-        //                   discussionDetailsController
-        //                       .discussionReplies[0]
-        //                       .createdAt
-        //                       .toString(),
-        //                 ),
-        //                 totalReplies:
-        //                     discussionDetailsController
-        //                         .discussionReplies[0]
-        //                         .replies
-        //                         .length,
-        //                 username:
-        //                     discussionDetailsController
-        //                         .discussionReplies[0]
-        //                         .profile
-        //                         .userName,
-        //                 description:
-        //                     discussionDetailsController
-        //                         .discussionReplies[0]
-        //                         .desc,
-        //               ),
-        //               const SizedBox(height: 10),
-        //               Text(
-        //                 'Replies',
-        //                 style: TextStyle(
-        //                   fontSize: Dimensions.font19,
-        //                   fontWeight: FontWeight.bold,
-        //                 ),
-        //               ),
-        //               discussionDetailsController
-        //                       .discussionReplies[0]
-        //                       .replies
-        //                       .isEmpty
-        //                   ? const Expanded(
-        //                     child: Center(child: Text('No Replies :(')),
-        //                   )
-        //                   : Expanded(
-        //                     child: GestureDetector(
-        //                       onTap: () {
-        //                         FocusManager.instance.primaryFocus?.unfocus();
-        //                       },
-        //                       child: ListView.builder(
-        //                         itemCount:
-        //                             discussionDetailsController
-        //                                 .discussionReplies[0]
-        //                                 .replies
-        //                                 .length,
-        //                         itemBuilder: (context, index) {
-        //                           DiscussionReply reply =
-        //                               discussionDetailsController
-        //                                   .discussionReplies[0]
-        //                                   .replies[index];
-        //                           return ReplyDiscussionWidget(
-        //                             message: reply.reply,
-        //                             userName: reply.userName,
-        //                             time: discussionDetailsController
-        //                                 .timeAgoSince(
-        //                                   reply.createdAt.toString(),
-        //                                 ),
-        //                             image: reply.image,
-        //                           );
-        //                         },
-        //                       ),
-        //                     ),
-        //                   ),
-        //               // const Spacer(),
-        //               // reply field
-        //               Padding(
-        //                 padding: const EdgeInsets.symmetric(vertical: 10.0),
-        //                 child: Row(
-        //                   spacing: 10,
-        //                   children: [
-        //                     Expanded(
-        //                       child: TextField(
-        //                         controller:
-        //                             discussionDetailsController
-        //                                 .textReplyController,
-        //                         onTap: () {
-        //                           // scrollController.
-        //                         },
-        //                         // onTapOutside: (e) {
-        //                         //   FocusManager.instance.primaryFocus?.unfocus();
-        //                         // },
-        //                         maxLines: 5,
-        //                         minLines: 1,
-        //                         // expands: true,
-        //                         cursorColor: AppColors.primary,
-        //                         onChanged: (v) {
-        //                           // print(object)
-        //                         },
-        //                         decoration: InputDecoration(
-        //                           // suffixIcon: const Icon(Icons.camera_alt_outlined),
-        //                           // suffix: Image.asset('assets/camera_icon.png'),
-        //                           suffixIconConstraints: const BoxConstraints(
-        //                             maxHeight: 4,
-        //                             maxWidth: 2,
-        //                           ),
-        //
-        //                           isDense: true,
-        //                           hintText: "Type a Message",
-        //                           hintStyle: TextStyle(
-        //                             color: AppColors.primary,
-        //                           ),
-        //                           fillColor: AppColors.primary.withValues(
-        //                             alpha: 0.1,
-        //                           ),
-        //                           filled: true,
-        //                           border: OutlineInputBorder(
-        //                             borderSide: BorderSide.none,
-        //                             borderRadius: BorderRadius.circular(
-        //                               Constants.chatContainerRadius,
-        //                             ),
-        //                           ),
-        //                         ),
-        //                       ),
-        //                     ),
-        //                     GestureDetector(
-        //                       onTap: () {
-        //                         if (discussionDetailsController
-        //                             .textReplyController
-        //                             .text
-        //                             .isNotEmpty) {
-        //                           FocusManager.instance.primaryFocus?.unfocus();
-        //
-        //                           discussionDetailsController.postReply();
-        //                         } else {
-        //                           print('pppppppp empty text field');
-        //                         }
-        //                       },
-        //                       child: CircleAvatar(
-        //                         radius: 19,
-        //                         backgroundColor: AppColors.primary,
-        //                         child: Icon(
-        //                           Icons.send,
-        //                           size: 20,
-        //                           color: Colors.white,
-        //                         ),
-        //                       ),
-        //                     ),
-        //                   ],
-        //                 ),
-        //               ),
-        //               const SizedBox(height: 10),
-        //             ],
-        //           ),
-        // ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 24,
+                backgroundImage: NetworkImage(
+                  controller.discussionDetail.value?.profile.img ??
+                      'https://via.placeholder.com/48',
+                ),
+                backgroundColor: Colors.grey.shade300,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      controller.discussionDetail.value?.profile.userName ??
+                          'Unknown User',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    Text(
+                      controller.formatDate(
+                        controller.discussionDetail.value?.createdAt
+                                .toIso8601String() ??
+                            '',
+                      ),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            controller.discussionDetail.value?.title ?? 'No Title',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          const SizedBox(height: 12),
+          if (controller.discussionDetail.value?.image != null &&
+              controller.discussionDetail.value!.image.isNotEmpty)
+            Container(
+              width: double.infinity,
+              height: 200,
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                image: DecorationImage(
+                  image: NetworkImage(controller.discussionDetail.value!.image),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          Text(
+            controller.discussionDetail.value?.desc ??
+                'No description available',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.normal,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyReplies(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Icon(
+            Icons.chat_bubble_outline,
+            size: 64,
+            color: Colors.grey.shade400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No replies yet',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: Colors.grey.shade600),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Be the first to reply to this discussion',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.grey.shade500,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRepliesList(DiscussionsDetailController controller) {
+    return Obx(
+      () => ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: controller.replies.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final reply = controller.replies[index];
+          return _buildReplyItem(reply, controller);
+        },
+      ),
+    );
+  }
+
+  Widget _buildReplyItem(
+    DiscussionReply reply,
+    DiscussionsDetailController controller,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(width: .2, color: Colors.grey),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundImage: NetworkImage(reply.image),
+            backgroundColor: Colors.grey.shade300,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      reply.userName,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      controller.formatDate(reply.createdAt.toIso8601String()),
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  reply.reply,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.normal,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReplyInput(DiscussionsDetailController controller) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: controller.replyController,
+                decoration: InputDecoration(
+                  hintText: 'Write your reply...',
+                  hintStyle: Theme.of(context).inputDecorationTheme.hintStyle,
+                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                  filled: Theme.of(context).inputDecorationTheme.filled,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+                maxLines: null,
+                textInputAction: TextInputAction.send,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.normal),
+                onSubmitted: (_) {
+                  if (controller.replyController.text.trim().isNotEmpty) {
+                    controller.addReply(
+                      clubId: widget.clubId,
+                      discussionId: widget.discussionId,
+                      replyText: controller.replyController.text.trim(),
+                    );
+                  }
+                },
+              ),
+            ),
+            const SizedBox(width: 8),
+            Obx(
+              () =>
+                  controller.isReplyLoading.value
+                      ? const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(),
+                      )
+                      : Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            if (controller.replyController.text
+                                .trim()
+                                .isNotEmpty) {
+                              controller.addReply(
+                                clubId: widget.clubId,
+                                discussionId: widget.discussionId,
+                                replyText:
+                                    controller.replyController.text.trim(),
+                              );
+                            }
+                          },
+                          icon: Icon(
+                            Icons.send,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                        ),
+                      ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class DiscussionDetailWidget extends StatelessWidget {
-  final String username;
-  final String description;
-  final int totalReplies;
-  final String time;
-  final String image;
+class ShimmerDiscussionHeader extends StatelessWidget {
+  const ShimmerDiscussionHeader({super.key});
 
-  const DiscussionDetailWidget({
-    super.key,
-    required this.username,
-    required this.description,
-    required this.totalReplies,
-    required this.time,
-    required this.image,
-  });
+  @override
+  Widget build(BuildContext context) {
+    return shimmerContainer(
+      height: 220,
+      borderRadius: BorderRadius.circular(12),
+    );
+  }
+}
+
+class ShimmerRepliesTitle extends StatelessWidget {
+  const ShimmerRepliesTitle({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return shimmerBox(width: 120, height: 20);
+  }
+}
+
+class ShimmerRepliesList extends StatelessWidget {
+  const ShimmerRepliesList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(3, (index) => const ShimmerReplyItem()),
+    );
+  }
+}
+
+class ShimmerReplyItem extends StatelessWidget {
+  const ShimmerReplyItem({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        // border: Border.all(color: Colors.black),
-        // color: Colors.red,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(width: .2, color: Colors.grey.shade300),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 10,
         children: [
-          // profile picture
-          // const CircleAvatar(
-          //   backgroundColor: Color.fromARGB(255, 221, 178, 3),
-          //   radius: 25,
-          // ),
-          CustomNetworkImage(size: 45, imageUrl: image),
-          //Colum of username and message
+          shimmerContainer(width: 40, height: 40, shape: BoxShape.circle),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
-              // spacing: 3,
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //username
-                Text(
-                  username,
-                  style: TextStyle(
-                    fontSize: Dimensions.font18,
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                //message container
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      // padding: const EdgeInsets.all(9),
-                      decoration: BoxDecoration(
-                        // color: const Color(0xFFebefed),
-                        borderRadius: BorderRadius.circular(
-                          Constants.chatContainerRadius,
-                        ),
-                      ),
-                      child: Text(
-                        description,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: Dimensions.font16,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Image.asset(AppImages.replies, height: 20),
-                        const SizedBox(width: 5),
-                        Text(
-                          '$totalReplies',
-                          style: TextStyle(
-                            fontSize: Dimensions.font16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          time,
-                          style: TextStyle(fontSize: Dimensions.font14),
-                        ),
-                      ],
-                    ),
-                  ],
+                shimmerBox(width: 100, height: 12),
+                const SizedBox(height: 6),
+                shimmerBox(width: double.infinity, height: 14),
+                const SizedBox(height: 4),
+                shimmerBox(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  height: 14,
                 ),
               ],
             ),
           ),
-          // if (isSent)
-          //   const CircleAvatar(
-          //     backgroundColor: Color.fromARGB(255, 1, 177, 169),
-          //     radius: 20,
-          //   ),
-          // if (!isSent) const SizedBox(width: 30),
         ],
       ),
     );
   }
+}
+
+Widget shimmerBox({double width = double.infinity, double height = 100}) {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey.shade300,
+    highlightColor: Colors.grey.shade100,
+    child: Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+  );
+}
+
+Widget shimmerContainer({
+  double width = double.infinity,
+  double height = 100,
+  BorderRadius? borderRadius,
+  BoxShape shape = BoxShape.rectangle,
+}) {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey.shade300,
+    highlightColor: Colors.grey.shade100,
+    child: Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: shape,
+        borderRadius: shape == BoxShape.rectangle ? borderRadius : null,
+      ),
+    ),
+  );
 }

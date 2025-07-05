@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hobby_club_app/models/auth/profile_model.dart';
-import 'package:hobby_club_app/models/raw/response_model.dart';
-import 'package:hobby_club_app/models/raw/user_model.dart';
-import 'package:hobby_club_app/repo/profile_repo.dart';
+import 'package:hobby_club_app/models/common/response_model.dart';
+import 'package:hobby_club_app/models/common/user_model.dart';
+import 'package:hobby_club_app/repo/profile/profile_repo.dart';
 import 'package:hobby_club_app/utils/app_strings.dart';
 import 'package:hobby_club_app/view/widgets/custom_snackbar.dart';
 import 'package:image_picker/image_picker.dart';
@@ -109,23 +109,21 @@ class EditProfileController extends GetxController {
 
       bool shouldUpdate = true;
 
-      if (currentProfile != null) {
-        shouldUpdate =
-            !(currentProfile.userName == username &&
-                currentProfile.firstName == firstName &&
-                currentProfile.lastName == lastName &&
-                currentProfile.dob == dob &&
-                currentProfile.gender == gender);
+      shouldUpdate =
+          !(currentProfile.userName == username &&
+              currentProfile.firstName == firstName &&
+              currentProfile.lastName == lastName &&
+              currentProfile.dob == dob &&
+              currentProfile.gender == gender);
 
-        if (!shouldUpdate) {
-          isLoading = false;
-          update();
-          showCustomSnackBar(
-            "No Changes",
-            "No profile data has been modified.",
-          );
-          return;
-        }
+      if (!shouldUpdate) {
+        isLoading = false;
+        update();
+        showCustomSnackBar(
+          "No Changes",
+          "No profile data has been modified.",
+        );
+        return;
       }
 
       try {

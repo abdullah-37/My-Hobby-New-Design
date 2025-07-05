@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/raw/navigation_controller.dart';
+import 'package:hobby_club_app/controller/common/navigation_controller.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/app_images.dart';
 import 'package:hobby_club_app/view/calender_view/calender.dart';

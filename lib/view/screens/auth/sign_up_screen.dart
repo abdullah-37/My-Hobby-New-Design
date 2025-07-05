@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hobby_club_app/controller/auth/sign_up_controller.dart';
 import 'package:hobby_club_app/utils/theme/theme_helper.dart';
 import 'package:hobby_club_app/view/screens/auth/login_screen.dart';
-import 'package:hobby_club_app/view/screens/auth/profile_complete_screen.dart';
 import 'package:hobby_club_app/view/widgets/custom_button.dart';
 import 'package:hobby_club_app/view/widgets/header_widget.dart';
 import 'package:get/get.dart';
@@ -296,7 +295,7 @@ class _RegistrationPageState extends State<SignUpScreen> {
               ),
               if (controller.isLoading)
                 Container(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),

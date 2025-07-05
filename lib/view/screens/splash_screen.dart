@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/raw/splash_controller.dart';
+import 'package:hobby_club_app/controller/splash/splash_controller.dart';
 import 'package:hobby_club_app/utils/app_strings.dart';
 import 'package:hobby_club_app/utils/style.dart';
 

@@ -1,31 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/raw/theme_controller.dart';
+import 'package:hobby_club_app/controller/theme/theme_controller.dart';
 import 'package:hobby_club_app/utils/app_colors.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/utils/style.dart';
-import 'package:hobby_club_app/view/activities%20view/widgets/event_widget.dart';
+import 'package:hobby_club_app/view/screens/events/event_details_page.dart';
+import 'package:hobby_club_app/view/screens/events/widgets/event_widget.dart';
 import 'package:intl/intl.dart';
-
-class Event {
-  final int id;
-  final String name;
-  final String description;
-  final String date;
-  final String day;
-  final String time;
-  final String participants;
-
-  Event({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.date,
-    required this.day,
-    required this.time,
-    required this.participants,
-  });
-}
+import 'package:hobby_club_app/controller/club/club_event_controller.dart';
+import 'package:hobby_club_app/models/club/club_event_model.dart';
 
 class CustomCalendar extends StatefulWidget {
   const CustomCalendar({super.key});
@@ -37,47 +20,46 @@ class CustomCalendar extends StatefulWidget {
 class _CustomCalendarState extends State<CustomCalendar> {
   DateTime _focusedDate = DateTime.now();
   DateTime? _selectedDate;
-  String currentView = 'Monthly'; // Changed from currentScreen to currentView
-  final List<Event> _events = [
-    Event(
-      id: 1,
-      name: "name",
-      description: "description",
-      date: '04-06-2025',
-      day: "Wednesday",
-      time: "time",
-      participants: '10',
-    ),
-    Event(
-      id: 1,
-      name: "name",
-      description: "description",
-      date: '05-06-2025',
-      day: "Thursday",
-      time: "time",
-      participants: '4',
-    ),
-    Event(
-      id: 1,
-      name: "name",
-      description: "description",
-      date: '06-06-2025',
-      day: "Friday",
-      time: "time",
-      participants: '8',
-    ),
-  ];
+  String currentView = 'Weekly';
+  final ClubEventController _eventController = Get.put(ClubEventController());
+  List<ClubEvent> _events = [];
 
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
+    _loadEvents();
   }
 
-  List<Event> _getEventsForDate(DateTime date) {
-    final dateString = DateFormat('dd-MM-yyyy').format(date);
-    return _events.where((event) => event.date == dateString).toList()
-      ..sort((a, b) => a.time.compareTo(b.time));
+  Future<void> _loadEvents() async {
+    await _eventController.allClubEvent();
+    if (_eventController.clubEventModel.value != null) {
+      debugPrint(
+        'Loaded ${_eventController.clubEventModel.value!.data.length} events',
+      );
+      for (var event in _eventController.clubEventModel.value!.data) {
+        debugPrint('Event: ${event.title} on ${event.date}');
+      }
+      setState(() {
+        _events = _eventController.clubEventModel.value!.data;
+      });
+    } else {
+      debugPrint('No events loaded');
+    }
+  }
+
+  List<ClubEvent> _getEventsForDate(DateTime date) {
+    return _events.where((event) {
+      try {
+        final eventDate = DateFormat('d-MMMM-yyyy').parse(event.date);
+        return eventDate.year == date.year &&
+            eventDate.month == date.month &&
+            eventDate.day == date.day;
+      } catch (e) {
+        debugPrint('Error parsing date ${event.date}: $e');
+        return false;
+      }
+    }).toList();
   }
 
   String _getPeriodLabel() {
@@ -124,10 +106,16 @@ class _CustomCalendarState extends State<CustomCalendar> {
     });
   }
 
+  void _onDateSelected(DateTime date) {
+    setState(() {
+      _selectedDate = date;
+      _focusedDate = date;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeController themeController = Get.find<ThemeController>();
-    // final bool isDark = themeController.themeMode.value == ThemeMode.dark;
     return Obx(() {
       final isDark = themeController.themeMode.value == ThemeMode.dark;
 
@@ -138,7 +126,6 @@ class _CustomCalendarState extends State<CustomCalendar> {
             child: Column(
               children: [
                 const SizedBox(height: 18),
-                // Custom Tab Bar - UI remains exactly the same
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -176,12 +163,11 @@ class _CustomCalendarState extends State<CustomCalendar> {
                             child: AnimatedAlign(
                               duration: const Duration(milliseconds: 300),
                               alignment:
-                                  currentView == 'Monthly'
+                                  currentView == 'Weekly'
                                       ? Alignment.centerLeft
                                       : Alignment.centerRight,
                               child: Container(
                                 width: Get.width * 0.4,
-                                // height: 100,
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).primaryColor,
                                   borderRadius: BorderRadius.circular(30),
@@ -192,25 +178,6 @@ class _CustomCalendarState extends State<CustomCalendar> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      currentView = 'Monthly';
-                                    });
-                                  },
-                                  child: Center(
-                                    child: buildStatusItem(
-                                      title: 'Monthly',
-                                      bgColor: Colors.transparent,
-                                      textColor:
-                                          currentView == 'Monthly'
-                                              ? Colors.white
-                                              : AppColors.secondary,
-                                    ),
-                                  ),
-                                ),
-                              ),
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
@@ -230,6 +197,25 @@ class _CustomCalendarState extends State<CustomCalendar> {
                                   ),
                                 ),
                               ),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      currentView = 'Monthly';
+                                    });
+                                  },
+                                  child: Center(
+                                    child: buildStatusItem(
+                                      title: 'Monthly',
+                                      bgColor: Colors.transparent,
+                                      textColor:
+                                          currentView == 'Monthly'
+                                              ? Colors.white
+                                              : AppColors.secondary,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -237,7 +223,6 @@ class _CustomCalendarState extends State<CustomCalendar> {
                     ),
                   ),
                 ),
-                // Navigation controls
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8.0,
@@ -260,7 +245,6 @@ class _CustomCalendarState extends State<CustomCalendar> {
                           color: isDark ? Colors.white : Colors.black,
                         ),
                       ),
-
                       IconButton(
                         icon: Icon(
                           Icons.keyboard_arrow_right,
@@ -272,12 +256,10 @@ class _CustomCalendarState extends State<CustomCalendar> {
                     ],
                   ),
                 ),
-                // Calendar View
-                currentView == 'Monthly'
-                    ? _buildMonthlyView(isDark: isDark)
-                    : _buildWeeklyView(isDark: isDark),
-                // Event List
-                SizedBox(height: 30),
+                currentView == 'Weekly'
+                    ? _buildWeeklyView(isDark: isDark)
+                    : _buildMonthlyView(isDark: isDark),
+                const SizedBox(height: 30),
                 if (_selectedDate != null) _buildEventList(),
               ],
             ),
@@ -323,11 +305,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
               isInCurrentPeriod: isInCurrentMonth,
               hasEvents: hasEvents,
               showWeekday: false,
-              onTap: () {
-                setState(() {
-                  _selectedDate = date;
-                });
-              },
+              onTap: () => _onDateSelected(date),
             );
           },
         ),
@@ -357,8 +335,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 bool hasEvents = _getEventsForDate(date).isNotEmpty;
                 return Expanded(
                   child: SizedBox(
-                    // width: 50,
-                    height: 50,
+                    height: 60,
                     child: DateCell(
                       isDark: isDark,
                       date: date,
@@ -366,11 +343,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                       isInCurrentPeriod: true,
                       hasEvents: hasEvents,
                       showWeekday: true,
-                      onTap: () {
-                        setState(() {
-                          _selectedDate = date;
-                        });
-                      },
+                      onTap: () => _onDateSelected(date),
                     ),
                   ),
                 );
@@ -412,24 +385,31 @@ class _CustomCalendarState extends State<CustomCalendar> {
         ),
       );
     }
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: events.length,
-      itemBuilder: (context, index) {
-        final event = events[index];
-        return SizedBox();
-        // return EventWidget(
-        //   event: {
-        //     'date': 'Sun, Jul 14 · 2:00 PM',
-        //     'title': 'Hiking Adventure',
-        //     'location': 'Mountain Trail',
-        //     'Participants': '700',
-        //     'isParticipated': 'true',
-        //     'image':
-        //         'https://lh3.googleusercontent.com/aida-public/AB6AXuBarfFUfhbafijkJD1Zc3fOkIFs_MIzSnXIbh-SyTSd3g33mGxAQ5RhurAIs68pshLCPiKI7Tx1IMKTtdGLIH121CzmRENPceh1OFcynaBDfnoqHFZ8F-gWILKJKk3DwZokICvVOjfA9sNxK8CjAyYo4kItWfcyZFxgD6E2V3zHvvQKZCWt3x1drFr5I0eT5VghQ9-ybxCfJRJYJaQ5um_cIVueJ06WQ99e_zyIikltNxbmqZ7ij97mVZmRtI2cyY8SaWwxtyaBaWEJ',
-        //   },
-        // );
-      },
+    return Expanded(
+      child: ListView.builder(
+        // shrinkWrap: true,
+        // physics: const NeverScrollableScrollPhysics(),
+        itemCount: events.length,
+        itemBuilder: (context, index) {
+          try {
+            return Obx(() {
+              final event = _eventController.clubEventModel.value?.data[index];
+              return EventWidget(
+                event: event ?? events[index],
+                onAction: () {
+                  debugPrint('calendar profile.id! :: ${_eventController.user.id!}');
+                  Get.to(
+                    () => EventDetailsPage(eventDetail: event ?? events[index],userId: _eventController.user.id!,),
+                  );
+                },
+              );
+            });
+          } catch (e) {
+            debugPrint('Error parsing event date: $e');
+            return Container();
+          }
+        },
+      ),
     );
   }
 
@@ -499,6 +479,20 @@ class DateCell extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              if (showWeekday)
+                Text(
+                  DateFormat('E').format(date),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color:
+                        isToday
+                            ? isDark
+                                ? Colors.black
+                                : Colors.white
+                            : isInCurrentPeriod
+                            ? Colors.white
+                            : Colors.grey,
+                  ),
+                ),
               Text(
                 date.day.toString(),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(

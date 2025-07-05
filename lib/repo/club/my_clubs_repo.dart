@@ -1,4 +1,5 @@
-import 'package:hobby_club_app/models/raw/response_model.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:hobby_club_app/models/common/response_model.dart';
 import 'package:hobby_club_app/services/api_services.dart';
 import 'package:hobby_club_app/utils/api_url.dart';
 
@@ -8,7 +9,7 @@ class MyClubsRepo {
   Future<ResponseModel> getMyClubs() async {
     final url = '${ApiUrl.baseUrl}${ApiUrl.getUserClub}';
     ResponseModel responseModel = await _api.getRequest(url, passHeader: true);
-    print('repo resposne UserClub ${responseModel.responseJson} ');
+    debugPrint('repo resposne UserClub ${responseModel.responseJson} ');
 
     return responseModel;
   }

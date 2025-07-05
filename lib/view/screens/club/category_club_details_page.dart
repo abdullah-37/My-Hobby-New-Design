@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/join_club_controller.dart';
-import 'package:hobby_club_app/controller/raw/theme_controller.dart';
-import 'package:hobby_club_app/models/category_club_model.dart';
-import 'package:hobby_club_app/models/trending_club_model.dart';
+import 'package:hobby_club_app/controller/club/join_club_controller.dart';
+import 'package:hobby_club_app/controller/theme/theme_controller.dart';
+import 'package:hobby_club_app/models/club/categories/category_club_model.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 import 'package:hobby_club_app/view/widgets/custom_button.dart';
@@ -12,7 +11,7 @@ import 'package:shimmer/shimmer.dart';
 class CategoryClubDetailsPage extends StatefulWidget {
   final CategoryClub club;
 
-  CategoryClubDetailsPage({super.key, required this.club});
+  const CategoryClubDetailsPage({super.key, required this.club});
 
   @override
   State<CategoryClubDetailsPage> createState() =>
@@ -21,6 +20,9 @@ class CategoryClubDetailsPage extends StatefulWidget {
 
 class _CategoryClubDetailsPageState extends State<CategoryClubDetailsPage> {
   final joinClubController = Get.put(JoinClubController());
+  final TextEditingController _referralCodeController = TextEditingController();
+  bool _isLoading = false;
+
   String _formatTimeAgo(String dateTime) {
     final now = DateTime.now();
     final date = DateTime.parse(dateTime);
@@ -44,6 +46,208 @@ class _CategoryClubDetailsPageState extends State<CategoryClubDetailsPage> {
       final years = (diff.inDays / 365).floor();
       return '$years year${years > 1 ? 's' : ''} ago';
     }
+  }
+
+  void _showJoinClubDialog() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 0,
+            child: Container(
+              padding: EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.secondary,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Icon(
+                      Icons.group_add,
+                      color: Theme.of(context).iconTheme.color,
+                      size: 40,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Join',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    widget.club.title,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'You\'re about to join this amazing club!\nDo you have a referral code?',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Colors.grey[600],
+                      height: 1.4,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+
+                  SizedBox(height: 24),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: TextField(
+                      controller: _referralCodeController,
+                      textAlign: TextAlign.start,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        letterSpacing: 2,
+                        color: Colors.black,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Enter referral code (optional)',
+                        hintStyle: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[400],
+                          fontWeight: FontWeight.normal,
+                          letterSpacing: 0,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.card_giftcard,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      textCapitalization: TextCapitalization.characters,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 16,
+                        color: Colors.grey[500],
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'Referral code is optional',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 12,
+                          color: Colors.grey[500],
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed:
+                              _isLoading
+                                  ? null
+                                  : () {
+                                    _referralCodeController.clear();
+                                    Get.close(1);
+                                  },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(color: Colors.grey[300]!),
+                            ),
+                          ),
+                          child: Text(
+                            'Cancel',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.labelLarge?.copyWith(
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            joinClubController.joinClub(
+                              clubId: widget.club.id.toString(),
+                              referralCode: _referralCodeController.text.trim(),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          child:
+                              _isLoading
+                                  ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                  : Text(
+                                    'Join Club',
+                                    style:
+                                        Theme.of(context).textTheme.labelLarge,
+                                  ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
   }
 
   @override
@@ -165,7 +369,7 @@ class _CategoryClubDetailsPageState extends State<CategoryClubDetailsPage> {
                               themeController.themeMode.value == ThemeMode.dark
                                   ? Theme.of(
                                     context,
-                                  ).primaryColor.withOpacity(0.2)
+                                  ).primaryColor.withValues(alpha: 0.2)
                                   : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
@@ -174,7 +378,7 @@ class _CategoryClubDetailsPageState extends State<CategoryClubDetailsPage> {
                                   themeController.themeMode.value ==
                                           ThemeMode.dark
                                       ? Colors.transparent
-                                      : Colors.grey.withOpacity(0.2),
+                                      : Colors.grey.withValues(alpha: 0.2),
                               spreadRadius: 1,
                               blurRadius: 10,
                               offset: const Offset(0, 2),
@@ -325,9 +529,10 @@ class _CategoryClubDetailsPageState extends State<CategoryClubDetailsPage> {
             SizedBox(height: 20),
             Padding(
               padding: Dimensions.screenPaddingHorizontal,
-              child: CustomElevatedButton(onTap: () {
-                joinClubController.joinClub(clubId: club.id.toString());
-              }, title: 'Join Club'),
+              child: CustomElevatedButton(
+                onTap: _showJoinClubDialog,
+                title: 'Join Club',
+              ),
             ),
             SizedBox(height: 20),
           ],
@@ -385,7 +590,12 @@ class _CategoryClubDetailsPageState extends State<CategoryClubDetailsPage> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(title, style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
           Text(
             subtitle,
             style: const TextStyle(fontSize: 14, color: Color(0xFF60768a)),

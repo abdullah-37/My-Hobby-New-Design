@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/club_event_controller.dart';
+import 'package:hobby_club_app/controller/club/club_event_controller.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -8,7 +8,7 @@ import 'dart:io';
 class CreateEventScreen extends StatefulWidget {
   final String clubId;
 
-  const CreateEventScreen({Key? key, required this.clubId}) : super(key: key);
+  const CreateEventScreen({super.key, required this.clubId});
 
   @override
   State<CreateEventScreen> createState() => _CreateEventScreenState();

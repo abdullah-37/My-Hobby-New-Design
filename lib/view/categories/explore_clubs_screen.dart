@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/category_club_controller.dart';
+import 'package:hobby_club_app/controller/categories/category_club_controller.dart';
 import 'package:hobby_club_app/utils/dimensions.dart';
 import 'package:hobby_club_app/view/screens/club/category_club_details_page.dart';
 import 'package:hobby_club_app/view/screens/club/joined_club_detail_screen.dart';
@@ -12,7 +12,7 @@ class ExploreClubsScreen extends StatefulWidget {
   final String categoryName;
   final String categoryId;
 
-  ExploreClubsScreen({
+  const ExploreClubsScreen({
     super.key,
     required this.categoryName,
     required this.categoryId,
@@ -87,6 +87,7 @@ class _ExploreClubsScreenState extends State<ExploreClubsScreen> {
                               clubImage: club.img,
                               clubName: club.title,
                               clubDesc: club.desc,
+                              clubMembers: club.totalMembers.toString(),
                             ),
                           );
                         } else {

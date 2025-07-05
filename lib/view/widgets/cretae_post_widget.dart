@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/raw/theme_controller.dart';
-import 'package:hobby_club_app/controller/club_feed_controller.dart';
+import 'package:hobby_club_app/controller/theme/theme_controller.dart';
+import 'package:hobby_club_app/controller/club/club_feed_controller.dart';
 import 'package:hobby_club_app/view/widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -388,7 +388,7 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withValues(alpha: 0.2),
                       spreadRadius: 2,
                       blurRadius: 20,
                       offset: const Offset(0, 10),
@@ -452,7 +452,7 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: Colors.deepPurple.withOpacity(0.3),
+                                      color: Colors.deepPurple.withValues(alpha: 0.3),
                                       width: 2,
                                     ),
                                   ),
@@ -516,7 +516,7 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                                         child: Container(
                                           padding: const EdgeInsets.all(4),
                                           decoration: BoxDecoration(
-                                            color: Colors.black.withOpacity(
+                                            color: Colors.black.withValues(alpha:
                                               0.7,
                                             ),
                                             shape: BoxShape.circle,
@@ -615,7 +615,7 @@ class _CreatePostDialogState extends State<CreatePostDialog>
           children: [
             Icon(
               icon,
-              color: _isLoading ? Colors.grey.withOpacity(0.5) : Colors.grey,
+              color: _isLoading ? Colors.grey.withValues(alpha: 0.5) : Colors.grey,
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -623,7 +623,7 @@ class _CreatePostDialogState extends State<CreatePostDialog>
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: _isLoading ? Colors.grey.withOpacity(0.5) : Colors.grey,
+                color: _isLoading ? Colors.grey.withValues(alpha: 0.5) : Colors.grey,
                 fontWeight: FontWeight.w500,
               ),
             ),

@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:hobby_club_app/controller/club_feed_controller.dart';
-import 'package:hobby_club_app/controller/raw/theme_controller.dart';
-import 'package:hobby_club_app/models/club_feed_model.dart';
-import 'package:hobby_club_app/view/chat%20view/chat_screen.dart';
+import 'package:hobby_club_app/controller/club/club_feed_controller.dart';
+import 'package:hobby_club_app/controller/theme/theme_controller.dart';
+import 'package:hobby_club_app/models/club/club_feed_model.dart';
+import 'package:hobby_club_app/view/chat_view/chat_screen.dart';
 import 'package:hobby_club_app/view/discussion%20view/discussion_screen.dart';
-import 'package:hobby_club_app/view/gamification/gamification_page.dart';
+import 'package:hobby_club_app/view/screens/club/club_info_page.dart';
 import 'package:hobby_club_app/view/screens/club/club_feed_shimmer.dart';
 import 'package:hobby_club_app/view/screens/events/club_event_screen.dart';
 import 'package:hobby_club_app/view/widgets/cretae_post_widget.dart';
 import 'package:hobby_club_app/view/widgets/custom_appbar.dart';
 import 'package:hobby_club_app/view/widgets/expandable_floating_button.dart';
+import 'package:hobby_club_app/view/widgets/image_view.dart';
 
 class JoinedClubDetailScreen extends StatefulWidget {
   final String clubId;
   final String clubImage;
   final String clubName;
   final String clubDesc;
+  final String clubMembers;
 
   const JoinedClubDetailScreen({
     super.key,
@@ -25,6 +27,7 @@ class JoinedClubDetailScreen extends StatefulWidget {
     required this.clubImage,
     required this.clubName,
     required this.clubDesc,
+    required this.clubMembers,
   });
 
   @override
@@ -40,7 +43,7 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
   bool _isFabVisible = true;
   double _lastScrollOffset = 0;
   late AnimationController _fabVisibilityController;
-  late Animation<double> _fabAnimation;
+  bool _isExpanded = false;
 
   @override
   void initState() {
@@ -55,12 +58,6 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
     _fabVisibilityController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
-    );
-    _fabAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _fabVisibilityController,
-        curve: Curves.easeInOut,
-      ),
     );
     _animationController.forward();
     _feedController.clubFeed(clubId: widget.clubId);
@@ -158,7 +155,7 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -168,14 +165,21 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                image: NetworkImage(widget.clubImage),
-                fit: BoxFit.cover,
+          InkWell(
+            onTap: () {
+              Get.to(
+                () => ImageView(image: widget.clubImage, title: 'Club Image'),
+              );
+            },
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: NetworkImage(widget.clubImage),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
@@ -190,18 +194,46 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  widget.clubDesc,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                _buildExpandableText(),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildExpandableText() {
+    bool needsTruncation = widget.clubDesc.length > 50;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _isExpanded ? widget.clubDesc : widget.clubDesc,
+          style: Theme.of(context).textTheme.bodyMedium,
+          maxLines: _isExpanded ? null : 2,
+          overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+        ),
+        if (needsTruncation) ...[
+          const SizedBox(height: 4),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _isExpanded = !_isExpanded;
+              });
+            },
+            child: Text(
+              _isExpanded ? 'see less' : 'see more',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.blue,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.blue,
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -217,7 +249,7 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -229,23 +261,23 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
         children: [
           Text(
             'Club Events',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           InkWell(
-            onTap: (){
-              Get.to(()=> ClubEventScreen(clubId: widget.clubId,));
+            onTap: () {
+              Get.to(() => ClubEventScreen(clubId: widget.clubId));
             },
             child: Icon(
               Icons.forward_rounded,
               size: 30,
               color:
-              themeController.themeMode.value == ThemeMode.dark
-                  ? Colors.white
-                  : Colors.black,
+                  themeController.themeMode.value == ThemeMode.dark
+                      ? Colors.white
+                      : Colors.black,
             ),
-          )
+          ),
         ],
       ),
     );
@@ -255,40 +287,66 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
     return Scaffold(
-      floatingActionButton: _isFabVisible
-          ? Stack(
-        children: [
-          ExpandableFabMenu(
-            onDiscussionTap: () {
-              Get.to(() => DiscussionScreen());
-            },
-            onCreateFeedTap: () {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder:
-                    (context) => CreatePostDialog(
-                      clubId: widget.clubId,
-                      image: _feedController.profile.img,
-                      username: _feedController.profile.userName,
-                      fullName: _feedController.profile.firstName,
-                      onPostCreated: (description, imagePath) {
-                        print('Post created successfully');
-                        print('Post text: $description');
-                        if (imagePath != null) {
-                          print('Image: $imagePath');
-                        }
-                      },
-                    ),
-              );
-            },
-            onMessengerTap: () {
-              Get.to(() => ChatScreen());
-            },
-          ),
-        ],
-      ) : null,
-      appBar: CustomAppBar(title: 'Club', actionIcon: Icons.info_outlined,isAction: true, onAction: () {Get.to(()=> GamificationPage());}),
+      floatingActionButton:
+          _isFabVisible
+              ? Stack(
+                children: [
+                  ExpandableFabMenu(
+                    onDiscussionTap: () {
+                      setState(() => _isFabVisible = false);
+                      Get.to(
+                        () => DiscussionScreen(clubId: widget.clubId),
+                      )!.then((_) {
+                        setState(() => _isFabVisible = true);
+                      });
+                    },
+                    onCreateFeedTap: () {
+                      setState(() => _isFabVisible = false);
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder:
+                            (context) => CreatePostDialog(
+                              clubId: widget.clubId,
+                              image: _feedController.profile.img,
+                              username: _feedController.profile.userName,
+                              fullName: _feedController.profile.firstName,
+                              onPostCreated: (description, imagePath) {
+                                debugPrint('Post created: $description');
+                              },
+                            ),
+                      ).then((_) {
+                        setState(() => _isFabVisible = true);
+                      });
+                    },
+                    onMessengerTap: () {
+                      setState(() => _isFabVisible = false);
+                      Get.to(() => ChatScreen(clubId: widget.clubId))!.then((
+                        _,
+                      ) {
+                        setState(() => _isFabVisible = true);
+                      });
+                    },
+                  ),
+                ],
+              )
+              : null,
+      appBar: CustomAppBar(
+        title: 'Club',
+        actionIcon: Icons.info_outlined,
+        isAction: true,
+        onAction: () {
+          Get.to(
+            () => ClubInfoPage(
+              clubName: widget.clubName,
+              clubImage: widget.clubImage,
+              clubDesc: widget.clubDesc,
+              clubMembers: widget.clubMembers,
+              clubId: widget.clubId,
+            ),
+          );
+        },
+      ),
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: RefreshIndicator(
@@ -313,7 +371,9 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
               controller: _scrollController,
               slivers: [
                 SliverToBoxAdapter(child: _buildClubDetails()),
-                SliverToBoxAdapter(child: _buildClubEventDetails(themeController)),
+                SliverToBoxAdapter(
+                  child: _buildClubEventDetails(themeController),
+                ),
                 if (feeds.isEmpty)
                   SliverFillRemaining(
                     child: const Center(child: Text('No feeds available')),
@@ -332,7 +392,7 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
                               themeController.themeMode.value == ThemeMode.dark
                                   ? Theme.of(
                                     context,
-                                  ).primaryColor.withOpacity(0.2)
+                                  ).primaryColor.withValues(alpha: 0.2)
                                   : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
@@ -341,7 +401,7 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
                                   themeController.themeMode.value ==
                                           ThemeMode.dark
                                       ? Colors.transparent
-                                      : Colors.grey.withOpacity(0.2),
+                                      : Colors.grey.withValues(alpha: 0.2),
                               spreadRadius: 1,
                               blurRadius: 10,
                               offset: const Offset(0, 2),
@@ -350,13 +410,34 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Stack(
                             children: [
-                              _buildHeader(context, feed),
-                              _buildDescription(context, feed),
-                              if (feed.image.isNotEmpty) _buildImage(feed),
-                              _buildActions(context, feed, index),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildHeader(context, feed),
+                                  _buildDescription(context, feed),
+                                  if (feed.image.isNotEmpty) _buildImage(feed),
+                                  _buildActions(context, feed, index),
+                                ],
+                              ),
+                              // Align(
+                              //   alignment: Alignment.centerRight,
+                              //   child: Container(
+                              //     padding: EdgeInsets.all(5),
+                              //     decoration: BoxDecoration(
+                              //       borderRadius: BorderRadius.circular(12),
+                              //       color: Colors.grey[200],
+                              //     ),
+                              //     child: Text(
+                              //       feed.badge.title,
+                              //       style: TextStyle(
+                              //         color: Colors.grey[600],
+                              //         fontSize: 14,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -373,6 +454,7 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
 
   Widget _buildHeader(BuildContext context, feed) {
     final profile = feed.profile;
+    final badges = feed.badge;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -392,16 +474,41 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '${profile.firstName} ${profile.lastName}',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${profile.firstName} ${profile.lastName}',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    Text(
+                      '@${profile.userName}',
+                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                    ),
+                  ],
                 ),
-                Text(
-                  '@${profile.userName}',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.grey[200],
+                    image:
+                        badges.img.isNotEmpty
+                            ? DecorationImage(
+                              image: NetworkImage(badges.img),
+                              fit: BoxFit.cover,
+                              onError: (exception, stackTrace) {
+                                debugPrint(
+                                  'Failed to load image: $exception',
+                                );
+                              },
+                            )
+                            : null,
+                  ),
                 ),
               ],
             ),
@@ -428,43 +535,51 @@ class _JoinedClubDetailScreenState extends State<JoinedClubDetailScreen>
   Widget _buildImage(feed) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(top: 12),
-      child: Container(
-        height: 200,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.grey[200],
-          image:
-              feed.image != null && feed.image.isNotEmpty
-                  ? DecorationImage(
-                    image: NetworkImage(feed.image),
-                    fit: BoxFit.cover,
-                    onError: (exception, stackTrace) {
-                      print('Failed to load image: $exception');
-                    },
+      child: InkWell(
+        onTap: () {
+          Get.to(() => ImageView(image: feed.image, title: ''));
+        },
+        child: Container(
+          height: 300,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.grey[200],
+            image:
+                feed.image != null && feed.image.isNotEmpty
+                    ? DecorationImage(
+                      image: NetworkImage(feed.image),
+                      fit: BoxFit.cover,
+                      onError: (exception, stackTrace) {
+                        debugPrint('Failed to load image: $exception');
+                      },
+                    )
+                    : null,
+          ),
+          child:
+              feed.image == null || feed.image.isEmpty
+                  ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.image_not_supported,
+                          size: 50,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'No Image Available',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                   : null,
         ),
-        child:
-            feed.image == null || feed.image.isEmpty
-                ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.image_not_supported,
-                        size: 50,
-                        color: Colors.grey[400],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'No Image Available',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
-                      ),
-                    ],
-                  ),
-                )
-                : null,
       ),
     );
   }
@@ -636,6 +751,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
 
               return ListView.builder(
                 padding: const EdgeInsets.all(16),
+                shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: currentComments.length,
                 itemBuilder: (context, index) {
@@ -656,7 +772,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                             decoration: BoxDecoration(
                               color: Theme.of(
                                 context,
-                              ).primaryColor.withOpacity(0.1),
+                              ).primaryColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Column(
@@ -695,9 +811,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
               children: [
                 CircleAvatar(
                   radius: 18,
-                  backgroundImage: NetworkImage(
-                    _feedController.profile.img!,
-                  ),
+                  backgroundImage: NetworkImage(_feedController.profile.img!),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

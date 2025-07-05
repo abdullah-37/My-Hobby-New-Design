@@ -1,3 +1,9 @@
+import 'dart:convert';
+
+ClubModel clubModelFromJson(String str) => ClubModel.fromJson(json.decode(str));
+
+String clubModelToJson(ClubModel data) => json.encode(data.toJson());
+
 class ClubModel {
   final String message;
   final bool status;
@@ -9,68 +15,95 @@ class ClubModel {
     required this.data,
   });
 
-  factory ClubModel.fromJson(Map<String, dynamic> json) {
-    var list = json['data'] as List;
-    List<Club> clubsList = list.map((i) => Club.fromJson(i)).toList();
-
-    return ClubModel(
-      message: json['message'],
-      status: json['status'],
-      data: clubsList,
-    );
-  }
+  factory ClubModel.fromJson(Map<String, dynamic> json) => ClubModel(
+    message: json["message"],
+    status: json["status"],
+    data: List<Club>.from(json["data"].map((x) => Club.fromJson(x))),
+  );
 
   Map<String, dynamic> toJson() => {
-    'message': message,
-    'status': status,
-    'data': data.map((club) => club.toJson()).toList(),
+    "message": message,
+    "status": status,
+    "data": List<dynamic>.from(data.map((x) => x.toJson())),
   };
 }
 
 class Club {
+  final int categoryId;
+  final String category;
   final int id;
-  final int userId;
   final String title;
   final String desc;
-  final String category;
-  final String status;
   final String img;
-  final int membersCount;
+  final int totalMembers;
+  final String status;
+  final int totalSchedules;
+  final Badge badge;
 
   Club({
+    required this.categoryId,
+    required this.category,
     required this.id,
-    required this.userId,
     required this.title,
     required this.desc,
-    required this.category,
-    required this.status,
     required this.img,
-    required this.membersCount,
+    required this.totalMembers,
+    required this.status,
+    required this.totalSchedules,
+    required this.badge,
   });
 
-  factory Club.fromJson(Map<String, dynamic> json) {
-    return Club(
-      id: json['id'],
-      userId: json['user_id'],
-      title: json['title'],
-      desc: json['desc'],
-      category: json['category'],
-      status: json['status'],
-      img: json['img'],
-      membersCount: json['members_count'],
-    );
-  }
+  factory Club.fromJson(Map<String, dynamic> json) => Club(
+    categoryId: json["category_id"],
+    category: json["category"],
+    id: json["id"],
+    title: json["title"],
+    desc: json["desc"],
+    img: json["img"],
+    totalMembers: json["total_members"],
+    status: json["status"],
+    totalSchedules: json["total_schedules"],
+    badge: Badge.fromJson(json["badge"]),
+  );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'user_id': userId,
-      'title': title,
-      'desc': desc,
-      'category': category,
-      'status': status,
-      'img': img,
-      'members_count': membersCount,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    "category_id": categoryId,
+    "category": category,
+    "id": id,
+    "title": title,
+    "desc": desc,
+    "img": img,
+    "total_members": totalMembers,
+    "status": status,
+    "total_schedules": totalSchedules,
+    "badge": badge.toJson(),
+  };
+}
+
+class Badge {
+  final int id;
+  final String title;
+  final String type;
+  final String img;
+
+  Badge({
+    required this.id,
+    required this.title,
+    required this.type,
+    required this.img,
+  });
+
+  factory Badge.fromJson(Map<String, dynamic> json) => Badge(
+    id: json["id"],
+    title: json["title"],
+    type: json["type"],
+    img: json["img"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "title": title,
+    "type": type,
+    "img": img,
+  };
 }

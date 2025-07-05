@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../../models/auth/profile_model.dart';
 import '../../models/club/club_model.dart';
-import '../../models/raw/response_model.dart';
+import '../../models/common/response_model.dart';
 import '../../repo/club/my_clubs_repo.dart';
 
 class ProfileController extends GetxController {
@@ -28,7 +29,7 @@ class ProfileController extends GetxController {
     update();
 
     final userData = storage.read("profile");
-    print(userData);
+    debugPrint('userData :: $userData');
 
     if (userData != null) {
       profile = ProfileModel.fromJson(userData);
@@ -56,10 +57,10 @@ class ProfileController extends GetxController {
         pendingClubs =
             allClubs.where((club) => club.status == 'pending').toList();
       } else {
-        print('Failed to fetch clubs: ${response.message}');
+        debugPrint('Failed to fetch clubs: ${response.message}');
       }
     } catch (e) {
-      print('Error fetching clubs: $e');
+      debugPrint('Error fetching clubs: $e');
     } finally {
       isLoading = false;
       update();
